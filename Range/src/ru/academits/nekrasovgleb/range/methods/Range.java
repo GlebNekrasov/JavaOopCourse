@@ -1,4 +1,4 @@
-package task1;
+package ru.academits.nekrasovgleb.range.methods;
 
 public class Range {
     private double from;

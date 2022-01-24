@@ -1,4 +1,6 @@
-package task1;
+package ru.academits.nekrasovgleb.range.main;
+
+import ru.academits.nekrasovgleb.range.methods.Range;
 
 import java.util.Scanner;
 
