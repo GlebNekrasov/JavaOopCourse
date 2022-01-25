@@ -1,6 +1,6 @@
 package ru.academits.nekrasovgleb.range.main;
 
-import ru.academits.nekrasovgleb.range.methods.Range;
+import ru.academits.nekrasovgleb.range.Range;
 
 import java.util.Scanner;
 
