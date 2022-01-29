@@ -43,46 +43,36 @@ public class Main {
         double number = scanner.nextDouble();
 
         if (range1.isInside(number)) {
-            System.out.println("Введеное число находится внутри первого диапазона");
+            System.out.println("Введенное число находится внутри первого диапазона");
         } else if (Math.abs(number - range1.getFrom()) < Math.abs(number - range1.getTo())) {
-            System.out.println("Введенное число лежит левее первого диапазана на " + (range1.getFrom() - number));
+            System.out.println("Введенное число лежит левее первого диапазона на " + (range1.getFrom() - number));
         } else {
-            System.out.println("Введенное число лежит правее первого диапазана на " + (number - range1.getTo()));
+            System.out.println("Введенное число лежит правее первого диапазона на " + (number - range1.getTo()));
         }
 
-        Range rangeIntersection = range1.getIntersection(range2);
+        Range intersection = range1.getIntersection(range2);
+        System.out.print("Пересечение диапазонов: ");
 
-        if (rangeIntersection == null) {
-            System.out.print("Диапазоны не пересекаются");
+        if (intersection == null) {
+            System.out.print("отсутствует");
         } else {
-            double rangeIntersectionFrom = rangeIntersection.getFrom();
-            double rangeIntersectionTo = rangeIntersection.getTo();
-            System.out.printf("Диапазаон пересечения: (%f; %f)", rangeIntersectionFrom, rangeIntersectionTo);
-        }
-
-        System.out.println();
-        Range[] unionRange = range1.getUnion(range2);
-
-        if (unionRange.length == 1) {
-            System.out.printf("Объединение диапазаонов - это один диапазон: (%f; %f)",
-                    unionRange[0].getFrom(), unionRange[0].getTo());
-        } else {
-            System.out.printf("Объединение диапазаонов - это два диапазона: (%f; %f) и (%f; %f)",
-                    unionRange[0].getFrom(), unionRange[0].getTo(), unionRange[1].getFrom(), unionRange[1].getTo());
+            System.out.print(intersection);
         }
 
         System.out.println();
-        Range[] differenceRange = range1.getDifference(range2);
+        Range[] union = range1.getUnion(range2);
+        System.out.print("Объединение диапазонов: ");
 
-        if (differenceRange == null) {
-            System.out.print("Разность первого и второго диапазона равна 0");
-        } else if (differenceRange.length == 1) {
-            System.out.printf("Разность первого и второго диапазаона - это один диапазон: (%f; %f)",
-                    differenceRange[0].getFrom(), differenceRange[0].getTo());
-        } else {
-            System.out.printf("Разность первого и второго диапазона - это два диапазона: (%f; %f) и (%f; %f)",
-                    differenceRange[0].getFrom(), differenceRange[0].getTo(),
-                    differenceRange[1].getFrom(), differenceRange[1].getTo());
+        for (Range e: union) {
+            System.out.print(e + "; ");
+        }
+
+        System.out.println();
+        Range[] difference = range1.getDifference(range2);
+        System.out.print("Разность диапазонов: ");
+
+        for (Range e: difference) {
+            System.out.print(e + "; ");
         }
     }
 }

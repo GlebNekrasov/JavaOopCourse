@@ -33,62 +33,43 @@ public class Range {
         return number >= from && number <= to;
     }
 
-    public Range getIntersection(Range range2) {
-        double from2 = range2.getFrom();
-        double to2 = range2.getTo();
-
-        if (to <= from2 || to2 <= from) {
+    public Range getIntersection(Range range) {
+        if (to <= range.from || range.to <= from) {
             return null;
         }
 
-        double intersectionFrom = Math.max(from, from2);
-        double intersectionTo = Math.min(to, to2);
-
-        return new Range(intersectionFrom, intersectionTo);
+        return new Range(Math.max(from, range.from), Math.min(to, range.to));
     }
 
-    public Range[] getUnion(Range range2) {
-        double from2 = range2.getFrom();
-        double to2 = range2.getTo();
-
-        if (to >= from2 && from <= to2 ) {
-            double unionFrom = Math.min(from, from2);
-            double unionTo = Math.max(to, to2);
-
-            Range unionRange = new Range(unionFrom, unionTo);
-
-            return new Range[] {unionRange};
+    public Range[] getUnion(Range range) {
+        if (to <= range.from || range.to <= from) {
+            return new Range[]{new Range(from, to), new Range(range.from, range.to)};
         }
 
-        return new Range[] {this, range2};
+        return new Range[]{new Range(Math.min(from, range.from), Math.max(to, range.to))};
     }
 
-    public Range[] getDifference(Range range2) {
-        double from2 = range2.getFrom();
-        double to2 = range2.getTo();
-
-        if (from >= from2 && to <= to2) {
-            return null;
+    public Range[] getDifference(Range range) {
+        if (from >= range.from && to <= range.to) {
+            return new Range[]{};
         }
 
-        if (this.getIntersection(range2) == null) {
-            return new Range[] {this};
+        if (to <= range.from || range.to <= from) {
+            return new Range[]{new Range(from, to)};
         }
 
-        if (from < from2 && to > to2) {
-            Range differenceRange1 = new Range(from, from2);
-            Range differenceRange2 = new Range(to2, to);
-            return new Range[] {differenceRange1, differenceRange2};
+        if (from < range.from && to > range.to) {
+            return new Range[]{new Range(from, range.from), new Range(range.to, to)};
         }
 
-        Range differenceRange;
-
-        if (from < from2) {
-            differenceRange = new Range(from, from2);
-        } else {
-            differenceRange = new Range(to2, to);
+        if (from < range.from) {
+            return new Range[]{new Range(from, range.from)};
         }
 
-        return new Range[] {differenceRange};
+        return new Range[]{new Range(range.to, to)};
+    }
+
+    public String toString() {
+        return String.format("(%f; %f)", from, to);
     }
 }
