@@ -63,7 +63,7 @@ public class Main {
         Range[] union = range1.getUnion(range2);
         System.out.print("Объединение диапазонов: ");
 
-        for (Range e: union) {
+        for (Range e : union) {
             System.out.print(e + "; ");
         }
 
@@ -71,7 +71,7 @@ public class Main {
         Range[] difference = range1.getDifference(range2);
         System.out.print("Разность диапазонов: ");
 
-        for (Range e: difference) {
+        for (Range e : difference) {
             System.out.print(e + "; ");
         }
     }

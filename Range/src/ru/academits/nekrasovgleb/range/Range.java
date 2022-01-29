@@ -42,7 +42,7 @@ public class Range {
     }
 
     public Range[] getUnion(Range range) {
-        if (to <= range.from || range.to <= from) {
+        if (to < range.from || range.to < from) {
             return new Range[]{new Range(from, to), new Range(range.from, range.to)};
         }
 
@@ -69,6 +69,7 @@ public class Range {
         return new Range[]{new Range(range.to, to)};
     }
 
+    @Override
     public String toString() {
         return String.format("(%f; %f)", from, to);
     }
