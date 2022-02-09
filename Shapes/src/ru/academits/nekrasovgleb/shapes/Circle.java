@@ -1,6 +1,4 @@
-package ru.academits.nekrasovgleb.shapes.circle;
-
-import ru.academits.nekrasovgleb.shapes.Shape;
+package ru.academits.nekrasovgleb.shapes;
 
 public class Circle implements Shape {
     private double radius;
@@ -39,7 +37,7 @@ public class Circle implements Shape {
 
     @Override
     public String toString() {
-        return String.format("(radius = %f)", radius);
+        return String.format("Тип фигуры - окружность. Радиус = %f", radius);
     }
 
     @Override
@@ -51,16 +49,16 @@ public class Circle implements Shape {
     }
 
     @Override
-    public boolean equals(Shape shape) {
-        if (shape == this) {
+    public boolean equals(Object o) {
+        if (o == this) {
             return true;
         }
 
-        if (shape == null || shape.getClass() != getClass()) {
+        if (o == null || o.getClass() != getClass()) {
             return false;
         }
 
-        Circle circle = (Circle) shape;
+        Circle circle = (Circle) o;
 
         return circle.radius == radius;
     }

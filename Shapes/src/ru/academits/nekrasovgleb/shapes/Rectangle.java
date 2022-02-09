@@ -1,6 +1,4 @@
-package ru.academits.nekrasovgleb.shapes.rectangle;
-
-import ru.academits.nekrasovgleb.shapes.Shape;
+package ru.academits.nekrasovgleb.shapes;
 
 public class Rectangle implements Shape {
     private double width;
@@ -16,13 +14,13 @@ public class Rectangle implements Shape {
         return width;
     }
 
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
     @Override
     public double getHeight() {
         return height;
-    }
-
-    public void setWidth(double width) {
-        this.width = width;
     }
 
     public void setHeight(double height) {
@@ -41,7 +39,7 @@ public class Rectangle implements Shape {
 
     @Override
     public String toString() {
-        return String.format("(width = %f, height = %f)", width, height);
+        return String.format("Тип фигуры - прямоугольник. Ширина = %f, высота = %f", width, height);
     }
 
     @Override
@@ -54,16 +52,16 @@ public class Rectangle implements Shape {
     }
 
     @Override
-    public boolean equals(Shape shape) {
-        if (shape == this) {
+    public boolean equals(Object o) {
+        if (o == this) {
             return true;
         }
 
-        if (shape == null || shape.getClass() != getClass()) {
+        if (o == null || o.getClass() != getClass()) {
             return false;
         }
 
-        Rectangle rectangle = (Rectangle) shape;
+        Rectangle rectangle = (Rectangle) o;
 
         return rectangle.width == width && rectangle.height == height;
     }
