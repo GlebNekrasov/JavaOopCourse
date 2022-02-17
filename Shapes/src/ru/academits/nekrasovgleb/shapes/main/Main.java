@@ -1,9 +1,7 @@
 package ru.academits.nekrasovgleb.shapes.main;
 
 import ru.academits.nekrasovgleb.shapes.Shape;
-import ru.academits.nekrasovgleb.shapes.areacomparator.AreaComparator;
 import ru.academits.nekrasovgleb.shapes.Circle;
-import ru.academits.nekrasovgleb.shapes.perimetercomparator.PerimeterComparator;
 import ru.academits.nekrasovgleb.shapes.Rectangle;
 import ru.academits.nekrasovgleb.shapes.Square;
 import ru.academits.nekrasovgleb.shapes.Triangle;

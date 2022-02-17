@@ -75,27 +75,15 @@ public class Triangle implements Shape {
         return Math.max(y1, Math.max(y2, y3)) - Math.min(y1, Math.min(y2, y3));
     }
 
-    private double getSideLength(int sideNumber) {
-        if (sideNumber == 1) {
-            return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-        }
-
-        if (sideNumber == 2) {
-            return Math.sqrt(Math.pow(x3 - x2, 2) + Math.pow(y3 - y2, 2));
-        }
-
-        if (sideNumber == 3) {
-            return Math.sqrt(Math.pow(x3 - x1, 2) + Math.pow(y3 - y1, 2));
-        }
-
-        return 0;
+    private double getSideLength(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 
     @Override
     public double getArea() {
-        double side1Length = getSideLength(1);
-        double side2Length = getSideLength(2);
-        double side3Length = getSideLength(3);
+        double side1Length = getSideLength(x1, y1, x2, y2);
+        double side2Length = getSideLength(x1, y1, x3, y3);
+        double side3Length = getSideLength(x2, y2, x3, y3);
         double halfPerimeter = (side1Length + side2Length + side3Length) / 2;
 
         return Math.sqrt(halfPerimeter * (halfPerimeter - side1Length) *
@@ -104,12 +92,12 @@ public class Triangle implements Shape {
 
     @Override
     public double getPerimeter() {
-        return getSideLength(1) + getSideLength(2) + getSideLength(3);
+        return getSideLength(x1, y1, x2, y2) + getSideLength(x1, y1, x3, y3) + getSideLength(x2, y2, x3, y3);
     }
 
     @Override
     public String toString() {
-        return String.format("Тип фигуры - треугольник. Координаты вершин равны: (%f; %f), (%f; %f), (%f; %f)",
+        return String.format("{Треугольник, координаты вершин: (%f; %f), (%f; %f), (%f; %f)}",
                 x1, y1, x2, y2, x3, y3);
     }
 
@@ -138,8 +126,8 @@ public class Triangle implements Shape {
 
         Triangle triangle = (Triangle) o;
 
-        return triangle.x1 == x1 && triangle.y1 == y1 &&
-                triangle.x2 == x2 && triangle.y2 == y2 &&
-                triangle.x3 == x3 && triangle.y3 == y3;
+        return triangle.x1 == x1 && triangle.y1 == y1
+                && triangle.x2 == x2 && triangle.y2 == y2
+                && triangle.x3 == x3 && triangle.y3 == y3;
     }
 }

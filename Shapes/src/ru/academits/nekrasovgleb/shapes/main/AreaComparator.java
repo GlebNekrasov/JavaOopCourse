@@ -1,4 +1,4 @@
-package ru.academits.nekrasovgleb.shapes.areacomparator;
+package ru.academits.nekrasovgleb.shapes.main;
 
 import ru.academits.nekrasovgleb.shapes.Shape;
 

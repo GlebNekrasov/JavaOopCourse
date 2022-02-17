@@ -37,7 +37,7 @@ public class Square implements Shape {
 
     @Override
     public String toString() {
-        return String.format("Тип фигуры - квадрат. Длина стороны = %f", sideLength);
+        return String.format("{Квадрат, длина стороны = %f}", sideLength);
     }
 
     @Override

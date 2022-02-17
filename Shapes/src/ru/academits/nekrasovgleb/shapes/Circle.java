@@ -37,7 +37,7 @@ public class Circle implements Shape {
 
     @Override
     public String toString() {
-        return String.format("Тип фигуры - окружность. Радиус = %f", radius);
+        return String.format("{Окружность, радиус = %f}", radius);
     }
 
     @Override
