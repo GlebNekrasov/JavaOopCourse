@@ -29,11 +29,7 @@ public class Vector {
                     " {" + vectorSize + "}. Размерность вектора должна быть > 0");
         }
 
-        if (components.length != 0) {
-            this.components = Arrays.copyOf(components, vectorSize);
-        } else {
-            this.components = new double[vectorSize];
-        }
+        this.components = Arrays.copyOf(components, vectorSize);
     }
 
     public Vector(Vector vector) {
