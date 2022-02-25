@@ -101,7 +101,7 @@ public class Matrix {
 
     public Vector getRow(int rowIndex) {
         if (rowIndex < 0 || rowIndex >= rows.length) {
-            throw new ArrayIndexOutOfBoundsException("При получении вектора-строки передан недопустимый индекс строки:" +
+            throw new IndexOutOfBoundsException("При получении вектора-строки передан недопустимый индекс строки:" +
                     " {" + rowIndex + "}. Индекс строки должен быть в интервале от 0 до " + (rows.length - 1));
         }
 
@@ -110,7 +110,7 @@ public class Matrix {
 
     public void setRow(int rowIndex, Vector vector) {
         if (rowIndex < 0 || rowIndex >= rows.length) {
-            throw new ArrayIndexOutOfBoundsException("При задании вектора-строки передан недопустимый индекс строки:" +
+            throw new IndexOutOfBoundsException("При задании вектора-строки передан недопустимый индекс строки:" +
                     " {" + rowIndex + "}. Индекс строки должен быть в интервале от 0 до " + (rows.length - 1));
         }
 
@@ -124,7 +124,7 @@ public class Matrix {
 
     public Vector getColumn(int columnIndex) {
         if (columnIndex < 0 || columnIndex >= rows[0].getSize()) {
-            throw new ArrayIndexOutOfBoundsException("При получении вектора-столбца передан недопустимый индекс столбца:" +
+            throw new IndexOutOfBoundsException("При получении вектора-столбца передан недопустимый индекс столбца:" +
                     " {" + columnIndex + "}. Индекс столбца должен быть в интервале от 0 до " + (rows[0].getSize() - 1));
         }
 
