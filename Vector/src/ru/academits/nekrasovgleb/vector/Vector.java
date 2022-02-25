@@ -29,10 +29,10 @@ public class Vector {
                     " {" + vectorSize + "}. Размерность вектора должна быть > 0");
         }
 
-        this.components = new double[vectorSize];
-
         if (components.length != 0) {
-            System.arraycopy(components, 0, this.components, 0, Math.min(components.length, vectorSize));
+            this.components = Arrays.copyOf(components, vectorSize);
+        } else {
+            this.components = new double[vectorSize];
         }
     }
 
@@ -101,15 +101,9 @@ public class Vector {
     }
 
     public double getComponent(int index) {
-        if (index < 0) {
-            throw new ArrayIndexOutOfBoundsException("При получении значения компоненты вектора передан недопустимый номер" +
-                    " компоненты: {" + index + "}. Номер компоненты вектора должен быть в интервале от 0 до " +
-                    (components.length - 1));
-        }
-
-        if (index >= components.length) {
-            throw new ArrayIndexOutOfBoundsException("При получении значения компоненты вектора передан недопустимый номер" +
-                    " компоненты: {" + index + "}. Номер компоненты вектора должен быть в интервале от 0 до " +
+        if (index < 0 || index >= components.length) {
+            throw new IndexOutOfBoundsException("При получении значения компоненты вектора передан недопустимый" +
+                    " индекс компоненты: {" + index + "}. Индекс компоненты вектора должен быть в интервале от 0 до " +
                     (components.length - 1));
         }
 
@@ -117,15 +111,9 @@ public class Vector {
     }
 
     public void setComponent(int index, double component) {
-        if (index < 0) {
-            throw new ArrayIndexOutOfBoundsException("При установке значения компоненты вектора передан недопустимый номер" +
-                    " компоненты: {" + index + "}. Номер компоненты вектора должен быть в интервале от 0 до " +
-                    (components.length - 1));
-        }
-
-        if (index >= components.length) {
-            throw new ArrayIndexOutOfBoundsException("При установке значения компоненты вектора передан недопустимый номер" +
-                    " компоненты: {" + index + "}. Номер компоненты вектора должен быть в интервале от 0 до " +
+        if (index < 0 || index >= components.length) {
+            throw new IndexOutOfBoundsException("При установке значения компоненты вектора передан недопустимый" +
+                    " индекс компоненты: {" + index + "}. Индекс компоненты вектора должен быть в интервале от 0 до " +
                     (components.length - 1));
         }
 
@@ -149,14 +137,7 @@ public class Vector {
 
     @Override
     public int hashCode() {
-        final int prime = 11;
-        int hash = 1;
-
-        for (double e : components) {
-            hash = prime * hash + Double.hashCode(e);
-        }
-
-        return hash;
+        return Arrays.hashCode(components);
     }
 
     public static Vector getSum(Vector vector1, Vector vector2) {
