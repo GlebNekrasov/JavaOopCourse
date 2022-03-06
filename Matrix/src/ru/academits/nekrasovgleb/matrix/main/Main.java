@@ -66,9 +66,9 @@ public class Main {
 
         Matrix matrix6 = new Matrix(matrix1);
         System.out.println("Создана матрица6 путем копирования матрицы1: " + matrix6);
-        matrix1.addMatrix(matrix6);
+        matrix1.add(matrix6);
         System.out.println("Матрица1 после сложения матрицы1 с матрицей 6: " + matrix1);
-        matrix1.subtractMatrix(matrix6);
+        matrix1.subtract(matrix6);
         System.out.println("Матрица1 после вычитания матрицы6 из матрицы1: " + matrix1);
         System.out.println();
 
@@ -84,6 +84,6 @@ public class Main {
         };
         Matrix matrix9 = new Matrix(vectors3);
         System.out.println("Создана матрица9: " + matrix9);
-        System.out.println("Результат умножаения матрицы9 на матрицу1: " + Matrix.getMultiplication(matrix9, matrix1));
+        System.out.println("Результат умножения матрицы9 на матрицу1: " + Matrix.getProduct(matrix9, matrix1));
     }
 }
