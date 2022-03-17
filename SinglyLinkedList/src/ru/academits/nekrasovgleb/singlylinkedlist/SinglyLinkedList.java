@@ -1,7 +1,9 @@
 package ru.academits.nekrasovgleb.singlylinkedlist;
 
+import java.util.NoSuchElementException;
+
 public class SinglyLinkedList<T> {
-    private listItem<T> head;
+    private ListItem<T> head;
     private int count;
 
     public SinglyLinkedList() {
@@ -12,21 +14,18 @@ public class SinglyLinkedList<T> {
             throw new NullPointerException("При копировании списка в качестве аргумента был передан пустой список.");
         }
 
-        listItem<T> sourceListItem = sourceList.head;
-        listItem<T> currentItem = new listItem<>(sourceList.head.getData());
+        ListItem<T> sourceListItem = sourceList.head;
+        ListItem<T> currentItem = new ListItem<>(sourceList.head.getData());
         head = currentItem;
-        count = 0;
 
-        for (int i = 0; i < sourceList.count - 1; ++i) {
+        for (int i = 1; i < sourceList.count; ++i) {
             sourceListItem = sourceListItem.getNext();
-            listItem<T> nextItem = new listItem<>(sourceListItem.getData());
+            ListItem<T> nextItem = new ListItem<>(sourceListItem.getData());
             currentItem.setNext(nextItem);
             currentItem = nextItem;
-            ++count;
         }
 
-        currentItem.setNext(null);
-        ++count;
+        count = sourceList.getSize();
     }
 
     public int getSize() {
@@ -35,149 +34,129 @@ public class SinglyLinkedList<T> {
 
     private void checkListNotEmpty() {
         if (count == 0) {
-            throw new NullPointerException("Была попытка сделать операцию над пустым списком.");
+            throw new NoSuchElementException("Список пустой.");
         }
     }
 
     private void checkIndexNotOutOfBounds(int index) {
+        if (getSize() == 0) {
+            throw new IndexOutOfBoundsException("Была попытка обращения по индексу к элементу пустого списка.");
+        }
+
         if (index < 0 || index >= count) {
             throw new IndexOutOfBoundsException("При операции над элементом списка передан недопустимый индекс элемента:" +
                     " {" + index + "}. Индекс элемента должен быть в интервале от 0 до " + (count - 1));
         }
     }
 
-    public T getFirstItem() {
+    private ListItem<T> getItem(int index) {
+        checkIndexNotOutOfBounds(index);
+        ListItem<T> item = head;
+
+        for (int i = 0; i < index; ++i) {
+            item = item.getNext();
+        }
+
+        return item;
+    }
+
+    public T getFirst() {
         checkListNotEmpty();
         return head.getData();
     }
 
-    public T getItem(int index) {
-        checkListNotEmpty();
-        checkIndexNotOutOfBounds(index);
-        listItem<T> item = head;
-
-        for (int i = 0; i < index; ++i) {
-            item = item.getNext();
-        }
-
-        return item.getData();
+    public T get(int index) {
+        return getItem(index).getData();
     }
 
-    public void setItem(int index, T data) {
-        checkListNotEmpty();
-        checkIndexNotOutOfBounds(index);
-        listItem<T> item = head;
-
-        for (int i = 0; i < index; ++i) {
-            item = item.getNext();
-        }
-
-        System.out.println("Старое значение элемента списка с индексом " + index + " равно: " + item.getData());
+    public T set(int index, T data) {
+        ListItem<T> item = getItem(index);
+        T oldData = item.getData();
         item.setData(data);
+        return oldData;
     }
 
-    public void removeItem(int index) {
-        checkListNotEmpty();
-        checkIndexNotOutOfBounds(index);
-        listItem<T> item = head;
-        listItem<T> previousItem = null;
-
-        for (int i = 0; i < index; ++i) {
-            previousItem = item;
-            item = item.getNext();
-        }
-
-        System.out.println("Значение удаленного элемента списка с индексом " + index + " равно: " + item.getData());
-
-        if (previousItem == null) {
-            head = head.getNext();
-        } else {
-            if (item.getNext() != null) {
-                previousItem.setNext(item.getNext());
-            } else {
-                previousItem.setNext(null);
-            }
-        }
-
-        --count;
-    }
-
-    public void addItem(T data) {
-        listItem<T> newItem = new listItem<>(data);
-        newItem.setNext(head);
-        head = newItem;
+    public void addFirst(T data) {
+        head = new ListItem<>(data, head);
         ++count;
     }
 
-    public void addItem(T data, int index) {
+    public void add(int index, T data) {
         if (index < 0 || index > count) {
             throw new IndexOutOfBoundsException("При вставке элемента в список передан недопустимый индекс элемента: " +
                     "{" + index + "}. Индекс элемента должен быть в интервале от 0 до " + count);
         }
 
-        listItem<T> item = head;
-        listItem<T> previousItem = null;
-
-        for (int i = 0; i < index; ++i) {
-            previousItem = item;
-            item = item.getNext();
+        if (index == 0) {
+            addFirst(data);
+            return;
         }
 
-        if (previousItem == null) {
-            head = new listItem<>(data, head);
-        } else {
-            listItem<T> newItem = new listItem<>(data, item);
-            previousItem.setNext(newItem);
-        }
-
+        ListItem<T> previousItem = getItem(index - 1);
+        ListItem<T> currentItem = previousItem.getNext();
+        ListItem<T> newItem = new ListItem<>(data, currentItem);
+        previousItem.setNext(newItem);
         ++count;
     }
 
-    public void removeFirstItem() {
+    public T removeFirst() {
         checkListNotEmpty();
-        System.out.println("Значение удаленного первого элемента списка равно: " + head.getData());
+
+        T oldData = head.getData();
         head = head.getNext();
         --count;
+
+        return oldData;
     }
 
-    public boolean removeItem(T data) {
+    public T remove(int index) {
+        checkIndexNotOutOfBounds(index);
+
+        if (index == 0) {
+            return removeFirst();
+        }
+
+        ListItem<T> previousItem = getItem(index - 1);
+        ListItem<T> currentItem = previousItem.getNext();
+        T oldData = currentItem.getData();
+        previousItem.setNext(currentItem.getNext());
+        --count;
+
+        return oldData;
+    }
+
+    public boolean remove(T data) {
         checkListNotEmpty();
-        listItem<T> item = head;
-        listItem<T> previousItem = null;
+        ListItem<T> currentItem = head;
+        ListItem<T> previousItem = null;
 
         for (int i = 0; i < count; ++i) {
-            if (item.getData() == data) {
+            if (currentItem.getData().equals(data)) {
                 if (previousItem == null) {
                     head = head.getNext();
                 } else {
-                    if (item.getNext() != null) {
-                        previousItem.setNext(item.getNext());
-                    } else {
-                        previousItem.setNext(null);
-                    }
+                    previousItem.setNext(currentItem.getNext());
                 }
 
                 --count;
                 return true;
             }
 
-            previousItem = item;
-            item = item.getNext();
+            previousItem = currentItem;
+            currentItem = currentItem.getNext();
         }
 
         return false;
     }
 
     public void reverse() {
-        checkListNotEmpty();
-
-        if (count == 1) {
+        if (count <= 1) {
             return;
         }
 
-        listItem<T> previousItem = null;
-        listItem<T> currentItem = head;
-        listItem<T> nextItem;
+        ListItem<T> previousItem = null;
+        ListItem<T> currentItem = head;
+        ListItem<T> nextItem;
 
         for (int i = 0; i < count; ++i) {
             nextItem = currentItem.getNext();
@@ -191,9 +170,12 @@ public class SinglyLinkedList<T> {
 
     @Override
     public String toString() {
-        checkListNotEmpty();
+        if (count == 0) {
+            return "[]";
+        }
+
         StringBuilder stringBuilder = new StringBuilder("[");
-        listItem<T> item = head;
+        ListItem<T> item = head;
 
         for (int i = 0; i < count; ++i) {
             stringBuilder

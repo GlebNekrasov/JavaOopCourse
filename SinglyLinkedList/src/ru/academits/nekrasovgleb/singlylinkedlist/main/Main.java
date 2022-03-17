@@ -8,43 +8,43 @@ public class Main {
         System.out.println("Создан пустой список. Размер списка равен: " + integerList.getSize());
         System.out.println();
 
-        integerList.addItem(1);
-        integerList.addItem(2);
-        integerList.addItem(3);
-        integerList.addItem(4);
+        integerList.addFirst(1);
+        integerList.addFirst(2);
+        integerList.addFirst(3);
+        integerList.addFirst(4);
         System.out.println("В список добавлены элементы. Размер списка равен: " + integerList.getSize());
         System.out.println("Элементы списка: " + integerList);
-        System.out.println("Элемент списка с индексом 0 равен: " + integerList.getFirstItem());
+        System.out.println("Элемент списка с индексом 0 равен: " + integerList.getFirst());
         System.out.println();
 
-        integerList.setItem(3, 10);
-        System.out.println("В списке изменен элемент с индексом 3. Размер списка равен: " + integerList.getSize());
+        Integer oldData1 = integerList.set(3, 10);
+        System.out.println("В списке изменен элемент с индексом 3. Старое значение элемента: " + oldData1);
         System.out.println("Элементы списка: " + integerList);
         System.out.println();
 
-        integerList.removeItem(3);
-        System.out.println("В списке удален элемент с индексом 3. Размер списка равен: " + integerList.getSize());
+        Integer oldData2 = integerList.remove(3);
+        System.out.println("В списке удален элемент с индексом 3. Старое значение элемента: " + oldData2);
         System.out.println("Элементы списка: " + integerList);
         System.out.println();
 
-        integerList.addItem(20, 2);
+        integerList.add(2, 20);
         System.out.println("В список добавлен элемент по индексу 2. Размер списка равен: " + integerList.getSize());
         System.out.println("Элементы списка: " + integerList);
         System.out.println();
 
-        integerList.removeFirstItem();
-        System.out.println("В списке удален первый элемент. Размер списка равен: " + integerList.getSize());
+        Integer oldData3 = integerList.removeFirst();
+        System.out.println("В списке удален первый элемент. Старое значение элемента: " + oldData3);
         System.out.println("Элементы списка: " + integerList);
         System.out.println();
 
-        boolean isDeleted = integerList.removeItem(Integer.valueOf(20));
+        boolean isDeleted = integerList.remove(Integer.valueOf(20));
         System.out.println("Элемент со значением \"20\" удален из списка? - " + isDeleted);
         System.out.println("Размер списка равен: " + integerList.getSize());
         System.out.println("Элементы списка: " + integerList);
         System.out.println();
 
-        integerList.addItem(4);
-        integerList.addItem(5);
+        integerList.addFirst(4);
+        integerList.addFirst(5);
         System.out.println("В список добавлено два элемента. Размер списка равен: " + integerList.getSize());
         System.out.println("Элементы списка: " + integerList);
         System.out.println();
@@ -59,7 +59,7 @@ public class Main {
         System.out.println("Элементы списка-копии: " + integerList2);
         System.out.println();
 
-        integerList.setItem(1, 500);
+        integerList.set(1, 500);
         System.out.println("В списке-источнике, который скопировали, заменили элемент с индексом 1.");
         System.out.println("Элементы списка-источника: " + integerList);
         System.out.println();

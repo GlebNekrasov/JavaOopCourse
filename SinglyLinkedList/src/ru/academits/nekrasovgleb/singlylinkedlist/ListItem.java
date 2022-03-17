@@ -1,14 +1,14 @@
 package ru.academits.nekrasovgleb.singlylinkedlist;
 
-public class listItem<T> {
+class ListItem<T> {
     private T data;
-    private listItem<T> next;
+    private ListItem<T> next;
 
-    public listItem(T data) {
+    public ListItem(T data) {
         this.data = data;
     }
 
-    public listItem(T data, listItem<T> next) {
+    public ListItem(T data, ListItem<T> next) {
         this.data = data;
         this.next = next;
     }
@@ -21,11 +21,11 @@ public class listItem<T> {
         this.data = data;
     }
 
-    public listItem<T> getNext() {
+    public ListItem<T> getNext() {
         return next;
     }
 
-    public void setNext(listItem<T> next) {
+    public void setNext(ListItem<T> next) {
         this.next = next;
     }
 }
