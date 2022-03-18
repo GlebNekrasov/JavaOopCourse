@@ -11,7 +11,7 @@ public class SinglyLinkedList<T> {
 
     public SinglyLinkedList(SinglyLinkedList<T> sourceList) {
         if (sourceList.count == 0) {
-            throw new NullPointerException("При копировании списка в качестве аргумента был передан пустой список.");
+            throw new IllegalArgumentException("При копировании списка в качестве аргумента был передан пустой список.");
         }
 
         ListItem<T> sourceListItem = sourceList.head;
