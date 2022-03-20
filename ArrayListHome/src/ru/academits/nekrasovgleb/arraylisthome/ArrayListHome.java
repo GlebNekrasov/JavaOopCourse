@@ -10,14 +10,15 @@ public class ArrayListHome {
         try (BufferedReader reader = new BufferedReader(new FileReader("Strings.txt"))) {
             ArrayList<String> linesList = new ArrayList<>();
 
-            for (String line = reader.readLine(); line != null; ) {
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 linesList.add(line);
-                line = reader.readLine();
             }
 
             System.out.println("Проверяем, что строки файла добавились в список:");
             System.out.println(linesList);
             System.out.println();
+        } catch (FileNotFoundException e) {
+            System.out.println("Не удалось найти файл: " + e.getMessage());
         } catch (IOException e) {
             System.out.println("При попытке прочитать файл произошла ошибка: " + e.getMessage());
         }
@@ -39,14 +40,14 @@ public class ArrayListHome {
         ArrayList<Integer> numbersList2 = new ArrayList<>(Arrays.asList(2, 7, 4, 2, 5, 5, 6, 9, 4, 7, 8, 13, 14, 15, 2));
         System.out.println("Исходный список: " + numbersList2);
 
-        ArrayList<Integer> numbersList3 = new ArrayList<>();
+        ArrayList<Integer> distinctNumbersList = new ArrayList<>(numbersList2.size());
 
-        for (int i = 0; i < numbersList2.size(); ++i) {
-            if (numbersList2.indexOf(numbersList2.get(i)) == i) {
-                numbersList3.add(numbersList2.get(i));
+        for (Integer number : numbersList2) {
+            if (!distinctNumbersList.contains(number)) {
+                distinctNumbersList.add(number);
             }
         }
 
-        System.out.println("Список после удаления повторяющихся элементов: " + numbersList3);
+        System.out.println("Из исходного списка создан новый список без повторяющихся элементов: " + distinctNumbersList);
     }
 }
