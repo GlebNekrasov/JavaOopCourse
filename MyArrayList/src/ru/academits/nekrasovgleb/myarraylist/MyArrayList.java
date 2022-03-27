@@ -22,7 +22,7 @@ public class MyArrayList<T> implements List<T> {
         items = (T[]) new Object[capacity];
     }
 
-    private void checkIndexNotOutOfBounds(int index) {
+    private void checkIndex(int index) {
         if (size == 0) {
             throw new IndexOutOfBoundsException("Была попытка обращения по индексу к элементу пустого списка.");
         }
@@ -35,13 +35,15 @@ public class MyArrayList<T> implements List<T> {
 
     @Override
     public T get(int index) {
-        checkIndexNotOutOfBounds(index);
+        checkIndex(index);
+
         return items[index];
     }
 
     @Override
     public T set(int index, T element) {
-        checkIndexNotOutOfBounds(index);
+        checkIndex(index);
+
         T oldItem = items[index];
         items[index] = element;
         return oldItem;
@@ -192,7 +194,8 @@ public class MyArrayList<T> implements List<T> {
 
     @Override
     public T remove(int index) {
-        checkIndexNotOutOfBounds(index);
+        checkIndex(index);
+
         T removedItem = items[index];
 
         if (index < size - 1) {
@@ -207,7 +210,7 @@ public class MyArrayList<T> implements List<T> {
     @Override
     public boolean remove(Object o) {
         for (int i = 0; i < size; ++i) {
-            if (items[i].equals(o)) {
+            if (Objects.equals(items[i], o)) {
                 if (i < size - 1) {
                     System.arraycopy(items, i + 1, items, i, size - i - 1);
                 }
@@ -227,7 +230,7 @@ public class MyArrayList<T> implements List<T> {
 
         for (int index = size - 1; index >= 0; --index) {
             for (Object item : c) {
-                if (items[index].equals(item)) {
+                if (Objects.equals(items[index], item)) {
                     if (index < size - 1) {
                         System.arraycopy(items, index + 1, items, index, size - index - 1);
                     }
@@ -251,7 +254,7 @@ public class MyArrayList<T> implements List<T> {
             boolean needToRemove = true;
 
             for (Object item : c) {
-                if (items[i].equals(item)) {
+                if (Objects.equals(items[i], item)) {
                     needToRemove = false;
                     break;
                 }
@@ -274,7 +277,7 @@ public class MyArrayList<T> implements List<T> {
     @Override
     public boolean contains(Object o) {
         for (int i = 0; i < size; ++i) {
-            if (items[i].equals(o)) {
+            if (Objects.equals(items[i], o)) {
                 return true;
             }
         }
@@ -288,7 +291,7 @@ public class MyArrayList<T> implements List<T> {
             boolean isOInList = false;
 
             for (int i = 0; i < size; ++i) {
-                if (items[i].equals(o)) {
+                if (Objects.equals(items[i], o)) {
                     isOInList = true;
                     break;
                 }
@@ -305,7 +308,7 @@ public class MyArrayList<T> implements List<T> {
     @Override
     public int indexOf(Object o) {
         for (int i = 0; i < size; ++i) {
-            if (items[i].equals(o)) {
+            if (Objects.equals(items[i], o)) {
                 return i;
             }
         }
@@ -316,7 +319,7 @@ public class MyArrayList<T> implements List<T> {
     @Override
     public int lastIndexOf(Object o) {
         for (int i = size - 1; i >= 0; --i) {
-            if (items[i].equals(o)) {
+            if (Objects.equals(items[i], o)) {
                 return i;
             }
         }
@@ -337,8 +340,8 @@ public class MyArrayList<T> implements List<T> {
 
     @Override
     public MyArrayList<T> subList(int fromIndex, int toIndex) {
-        checkIndexNotOutOfBounds(fromIndex);
-        checkIndexNotOutOfBounds(toIndex);
+        checkIndex(fromIndex);
+        checkIndex(toIndex);
 
         if (fromIndex >= toIndex) {
             throw new IllegalArgumentException("При получении части списка передан начальный индекс копирования" +
@@ -384,7 +387,7 @@ public class MyArrayList<T> implements List<T> {
         }
 
         for (int i = 0; i < size; ++i) {
-            if (items[i] != list.get(i)) {
+            if (!Objects.equals(items[i], list.get(i))) {
                 return false;
             }
         }
@@ -394,6 +397,10 @@ public class MyArrayList<T> implements List<T> {
 
     @Override
     public String toString() {
+        if (size == 0) {
+            return "[]";
+        }
+
         StringBuilder stringBuilder = new StringBuilder("[");
 
         for (int i = 0; i < size; ++i) {

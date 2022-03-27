@@ -7,7 +7,7 @@ import java.util.Arrays;
 public class Main {
     public static void main(String[] args) {
         MyArrayList<Integer> numbersList1 = new MyArrayList<>();
-        System.out.println("Создан пустой список");
+        System.out.println("Создан пустой список: " + numbersList1);
         numbersList1.add(3);
         numbersList1.add(4);
         numbersList1.add(7);
@@ -46,7 +46,7 @@ public class Main {
 
         Integer removedItem = numbersList1.remove(3);
         System.out.println("В первом списке удален элемент с индексом 3.");
-        System.out.println("Старое значение элемента с индексом 3 равно " + removedItem);
+        System.out.println("Значение удаленного элемента с индексом 3 равно " + removedItem);
         System.out.println("Первый список после изменения: " + numbersList1);
         System.out.println();
 
