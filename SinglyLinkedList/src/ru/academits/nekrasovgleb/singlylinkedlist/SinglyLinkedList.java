@@ -12,35 +12,35 @@ public class SinglyLinkedList<T> {
 
     public SinglyLinkedList(SinglyLinkedList<T> sourceList) {
         if (sourceList.size == 0) {
-            head = null;
-        } else {
-            ListItem<T> sourceListItem = sourceList.head;
-            ListItem<T> currentItem = new ListItem<>(sourceList.head.getData());
-            head = currentItem;
-
-            while (sourceListItem.getNext() != null) {
-                sourceListItem = sourceListItem.getNext();
-                ListItem<T> nextItem = new ListItem<>(sourceListItem.getData());
-                currentItem.setNext(nextItem);
-                currentItem = nextItem;
-            }
-
-            size = sourceList.getSize();
+            return;
         }
+
+        ListItem<T> sourceListItem = sourceList.head;
+        ListItem<T> currentItem = new ListItem<>(sourceList.head.getData());
+        head = currentItem;
+
+        while (sourceListItem.getNext() != null) {
+            sourceListItem = sourceListItem.getNext();
+            ListItem<T> nextItem = new ListItem<>(sourceListItem.getData());
+            currentItem.setNext(nextItem);
+            currentItem = nextItem;
+        }
+
+        size = sourceList.size;
     }
 
     public int getSize() {
         return size;
     }
 
-    private void checkListNotEmpty() {
+    private void checkIsNotEmpty() {
         if (size == 0) {
             throw new NoSuchElementException("Список пустой.");
         }
     }
 
     private void checkIndex(int index) {
-        if (getSize() == 0) {
+        if (size == 0) {
             throw new IndexOutOfBoundsException("Была попытка обращения по индексу {" + index + "} к элементу пустого списка.");
         }
 
@@ -63,7 +63,7 @@ public class SinglyLinkedList<T> {
     }
 
     public T getFirst() {
-        checkListNotEmpty();
+        checkIsNotEmpty();
 
         return head.getData();
     }
@@ -96,13 +96,12 @@ public class SinglyLinkedList<T> {
         }
 
         ListItem<T> previousItem = getItem(index - 1);
-        ListItem<T> currentItem = new ListItem<>(data, previousItem.getNext());
-        previousItem.setNext(currentItem);
+        previousItem.setNext(new ListItem<>(data, previousItem.getNext()));
         ++size;
     }
 
     public T removeFirst() {
-        checkListNotEmpty();
+        checkIsNotEmpty();
 
         T removedData = head.getData();
         head = head.getNext();
@@ -128,12 +127,11 @@ public class SinglyLinkedList<T> {
     }
 
     public boolean remove(T data) {
-        checkListNotEmpty();
+        checkIsNotEmpty();
 
-        ListItem<T> currentItem = head;
-        ListItem<T> previousItem = null;
-
-        for (int i = 0; i < size; ++i) {
+        for (ListItem<T> currentItem = head, previousItem = null;
+             currentItem != null;
+             previousItem = currentItem, currentItem = currentItem.getNext()) {
             if (Objects.equals(currentItem.getData(), data)) {
                 if (previousItem == null) {
                     head = head.getNext();
@@ -144,9 +142,6 @@ public class SinglyLinkedList<T> {
                 --size;
                 return true;
             }
-
-            previousItem = currentItem;
-            currentItem = currentItem.getNext();
         }
 
         return false;
@@ -177,13 +172,11 @@ public class SinglyLinkedList<T> {
         }
 
         StringBuilder stringBuilder = new StringBuilder("[");
-        ListItem<T> item = head;
 
-        for (int i = 0; i < size; ++i) {
+        for (ListItem<T> item = head; item != null; item = item.getNext()) {
             stringBuilder
                     .append(item.getData())
                     .append(", ");
-            item = item.getNext();
         }
 
         stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
