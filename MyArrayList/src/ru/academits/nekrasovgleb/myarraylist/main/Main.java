@@ -32,7 +32,6 @@ public class Main {
         System.out.println("Создан второй список: " + numbersList2);
         System.out.println();
 
-
         numbersList1.addAll(numbersList2);
         System.out.println("В первый список добавлены элементы второго списка.");
         System.out.println("Первый список после изменения: " + numbersList1);
