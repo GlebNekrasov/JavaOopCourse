@@ -127,7 +127,9 @@ public class SinglyLinkedList<T> {
     }
 
     public boolean remove(T data) {
-        checkIsNotEmpty();
+        if (size == 0) {
+            return false;
+        }
 
         for (ListItem<T> currentItem = head, previousItem = null;
              currentItem != null;
