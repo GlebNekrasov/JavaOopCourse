@@ -3,14 +3,15 @@ package ru.academits.nekrasovgleb.myarraylist;
 import java.util.*;
 
 public class MyArrayList<E> implements List<E> {
+    public static final int defaultCapacity = 10;
+
     private E[] items;
     private int size;
-    private final int capacity = 10;
     private int modCount;
 
     public MyArrayList() {
         //noinspection unchecked
-        items = (E[]) new Object[capacity];
+        items = (E[]) new Object[defaultCapacity];
     }
 
     public MyArrayList(int capacity) {
@@ -25,8 +26,7 @@ public class MyArrayList<E> implements List<E> {
 
     private void checkIndex(int index) {
         if (size == 0) {
-            throw new IndexOutOfBoundsException("Была попытка обращения по индексу {" + index + "} к элементу пустого " +
-                    "списка.");
+            throw new IndexOutOfBoundsException("Была попытка обращения по индексу {" + index + "} к элементу пустого списка.");
         }
 
         if (index < 0 || index >= size) {
@@ -64,7 +64,7 @@ public class MyArrayList<E> implements List<E> {
     private void increaseCapacity() {
         if (items.length == 0) {
             //noinspection unchecked
-            items = (E[]) new Object[capacity];
+            items = (E[]) new Object[defaultCapacity];
         } else {
             items = Arrays.copyOf(items, items.length * 2);
         }
@@ -138,19 +138,18 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        addAll(size, c);
-        return true;
+        return addAll(size, c);
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        if (c.isEmpty()) {
-            return false;
-        }
-
         if (index < 0 || index > size) {
             throw new IndexOutOfBoundsException("При добавлении коллекции в список передан недопустимый индекс элемента:" +
                     " {" + index + "}. Индекс элемента должен быть в интервале от 0 до " + size);
+        }
+
+        if (c.isEmpty()) {
+            return false;
         }
 
         ensureCapacity(size + c.size());
@@ -164,10 +163,10 @@ public class MyArrayList<E> implements List<E> {
         for (E item : c) {
             items[i] = item;
             ++i;
-            ++size;
-            ++modCount;
         }
 
+        size += c.size();
+        ++modCount;
         return true;
     }
 
@@ -219,30 +218,30 @@ public class MyArrayList<E> implements List<E> {
             return false;
         }
 
-        boolean isRemovedItem = false;
+        boolean isItemRemoved = false;
 
         for (int i = size - 1; i >= 0; --i) {
             if (c.contains(items[i])) {
                 remove(i);
-                isRemovedItem = true;
+                isItemRemoved = true;
             }
         }
 
-        return isRemovedItem;
+        return isItemRemoved;
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        boolean isRemovedItem = false;
+        boolean isItemRemoved = false;
 
         for (int i = size - 1; i >= 0; --i) {
             if (!c.contains(items[i])) {
                 remove(i);
-                isRemovedItem = true;
+                isItemRemoved = true;
             }
         }
 
-        return isRemovedItem;
+        return isItemRemoved;
     }
 
     @Override
@@ -290,17 +289,19 @@ public class MyArrayList<E> implements List<E> {
 
     @Override
     public <T> T[] toArray(T[] array) {
-        if (array.length >= size) {
-            for (int i = 0; i < size; ++i) {
-                //noinspection unchecked
-                array[i] = (T) items[i];
-            }
-
-            return array;
+        if (array.length < size) {
+            //noinspection unchecked
+            return (T[]) Arrays.copyOf(items, size, array.getClass());
         }
 
-        //noinspection unchecked
-        return (T[]) Arrays.copyOf(items, size, array.getClass());
+        //noinspection SuspiciousSystemArraycopy
+        System.arraycopy(items, 0, array, 0, size);
+
+        if (array.length > size) {
+            Arrays.fill(array, size, array.length, null);
+        }
+
+        return array;
     }
 
     @Override
@@ -335,10 +336,6 @@ public class MyArrayList<E> implements List<E> {
 
         if (list.size != size) {
             return false;
-        }
-
-        if (size == 0) {
-            return true;
         }
 
         for (int i = 0; i < size; ++i) {
