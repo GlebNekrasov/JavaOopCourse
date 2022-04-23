@@ -12,7 +12,7 @@ public class Main {
         System.out.println();
 
         MyHashTable<String> hashTable1 = new MyHashTable<>(stringsList1);
-        System.out.println("Создана хэш-таблица для списка на массиве. Проверяем, что все элементы списка есть в хэш-таблице: ");
+        System.out.println("Создана хэш-таблица для списка на массиве. Проверяем, что все элементы списка есть в хэш-таблице:");
         System.out.println(hashTable1);
         System.out.println();
 
@@ -28,7 +28,7 @@ public class Main {
         hashTable1.add("Восемь");
         hashTable1.add("Пять");
         hashTable1.add("Три");
-        System.out.println("В хэш-таблицу добавили еще 6 элементов: ");
+        System.out.println("В хэш-таблицу добавили еще 6 элементов:");
         System.out.println(hashTable1);
         System.out.println("Количество элементов в хэш-таблице: " + hashTable1.size());
         System.out.println();
@@ -36,7 +36,7 @@ public class Main {
         boolean isDeleted1 = hashTable1.remove("Три");
         System.out.println("Из хэш-таблицы удален элемент \"Три\"? - " + isDeleted1);
         System.out.println("Количество элементов в хэш-таблице после удаления: " + hashTable1.size());
-        System.out.println("Элементы хэш-таблицы после удаления элемента: ");
+        System.out.println("Элементы хэш-таблицы после удаления элемента:");
         System.out.println(hashTable1);
         System.out.println();
 
@@ -44,7 +44,7 @@ public class Main {
         boolean isDeleted2 = hashTable1.removeAll(stringsList2);
         System.out.println("Из хэш-таблицы удалена коллекция  " + stringsList2 + "? - " + isDeleted2);
         System.out.println("Количество элементов в хэш-таблице после удаления: " + hashTable1.size());
-        System.out.println("Элементы хэш-таблицы после удаления коллекции: ");
+        System.out.println("Элементы хэш-таблицы после удаления коллекции:");
         System.out.println(hashTable1);
         System.out.println();
 
@@ -64,7 +64,7 @@ public class Main {
 
         ArrayList<String> stringsList5 = new ArrayList<>(Arrays.asList("Два", "Три", "Четыре", "Пять", "Три"));
         hashTable1.addAll(stringsList5);
-        System.out.println("В хэш-таблицу добавили еще 5 элементов: ");
+        System.out.println("В хэш-таблицу добавили еще 5 элементов:");
         System.out.println(hashTable1);
         System.out.println("Количество элементов в хэш-таблице после добавления элементов: " + hashTable1.size());
         System.out.println();
@@ -73,7 +73,7 @@ public class Main {
         boolean isRetained1 = hashTable1.retainAll(stringsList6);
         System.out.println("В хэш-таблице оставлены только элементы коллекции  " + stringsList6 + "? - " + isRetained1);
         System.out.println("Количество элементов в хэш-таблице: " + hashTable1.size());
-        System.out.println("Элементы хэш-таблицы: ");
+        System.out.println("Элементы хэш-таблицы:");
         System.out.println(hashTable1);
         System.out.println();
 

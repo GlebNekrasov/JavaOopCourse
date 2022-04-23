@@ -3,17 +3,28 @@ package ru.academits.nekrasovgleb.myhashtable;
 import java.util.*;
 
 public class MyHashTable<E> implements Collection<E> {
+    /**
+     * в переменной initialLength хранится размер массива хэш-таблицы по умолчанию
+     */
+    public static final int initialLength = 16;
+
     private LinkedList<E>[] lists;
-    // в переменной size хранится количество объектов, находящихся в хэш-таблице
+
+    /**
+     * в переменной size хранится количество объектов, находящихся в хэш-таблице
+     */
     private int size;
-    // в переменной initialLength хранится размер массива хэш-таблицы по умолчанию
-    private final int initialLength = 16;
-    /* по аналогии с классом HashSet используется переменная loadFactor для управления отношением между количеством
-    объектов в хэш-таблице и размером массива хэш-таблицы - чтобы повысить вероятность наличия в конкретном элементе
-    массива хэш-таблицы только одного объекта, тем самым ускорив поиск объектов в хэш-таблице
+
+    /**
+     * по аналогии с классом HashSet используется переменная loadFactor для управления отношением между количеством
+     * объектов в хэш-таблице и размером массива хэш-таблицы - чтобы повысить вероятность наличия в конкретном элементе
+     * массива хэш-таблицы только одного объекта, тем самым ускорив поиск объектов в хэш-таблице
      */
     private double loadFactor = 0.75;
-    // переменная modCount используется в итераторе хэш-таблицы для событий удаления/добавления элементов массива хэш-таблицы
+
+    /**
+     * переменная modCount используется в итераторе хэш-таблицы для событий удаления/добавления элементов массива хэш-таблицы
+     */
     private int modCount;
 
     public MyHashTable() {
@@ -22,9 +33,9 @@ public class MyHashTable<E> implements Collection<E> {
     }
 
     public MyHashTable(int initialLength) {
-        if (initialLength < 0) {
-            throw new IllegalArgumentException("При создании хэш-таблицы указано отрицательное значение размера массива" +
-                    "хэш-таблицы {" + initialLength + "}. Размер массива хэш-таблицы должен быть >= 0");
+        if (initialLength <= 0) {
+            throw new IllegalArgumentException("При создании хэш-таблицы указано не положительное значение размера массива" +
+                    "хэш-таблицы {" + initialLength + "}. Размер массива хэш-таблицы должен быть > 0");
         }
 
         //noinspection unchecked
@@ -32,14 +43,14 @@ public class MyHashTable<E> implements Collection<E> {
     }
 
     public MyHashTable(int initialLength, double loadFactor) {
-        if (initialLength < 0) {
-            throw new IllegalArgumentException("При создании хэш-таблицы указано отрицательное значение размера массива" +
-                    "хэш-таблицы {" + initialLength + "}. Размер массива хэш-таблицы должен быть >= 0");
+        if (initialLength <= 0) {
+            throw new IllegalArgumentException("При создании хэш-таблицы указано не положительное значение размера массива" +
+                    "хэш-таблицы {" + initialLength + "}. Размер массива хэш-таблицы должен быть > 0");
         }
 
         if (loadFactor <= 0) {
             throw new IllegalArgumentException("При создании хэш-таблицы указано не положительное значение коэффициента " +
-                    "заполненности {" + loadFactor + "}. Коэффициент заполненности хэш-таблицы должна быть > 0");
+                    "заполненности {" + loadFactor + "}. Коэффициент заполненности хэш-таблицы должен быть > 0");
         }
 
         //noinspection unchecked
@@ -49,8 +60,9 @@ public class MyHashTable<E> implements Collection<E> {
 
     public MyHashTable(Collection<? extends E> c) {
         if (c.isEmpty()) {
-            throw new NullPointerException("При создании хэш-таблицы передана пустая коллекция. Коллекция должна " +
-                    "содержать минимум один объект.");
+            //noinspection unchecked
+            lists = (LinkedList<E>[]) new LinkedList[initialLength];
+            return;
         }
 
         int initialLength = getMinNeedLength(c.size(), loadFactor);
@@ -58,24 +70,38 @@ public class MyHashTable<E> implements Collection<E> {
         lists = (LinkedList<E>[]) new LinkedList[initialLength];
 
         for (E element : c) {
-            int index = getIndex(element, lists.length);
+            int index = getIndex(element);
             createListIfNull(index);
             lists[index].add(element);
-            ++size;
         }
+
+        size = c.size();
     }
 
-    // вспомогательный метод getIndex вычисляет индекс в массиве хэш-таблицы, по которому лежит объект
-    private int getIndex(Object o, int length) {
+    /**
+     * вспомогательный метод getIndex вычисляет индекс в массиве хэш-таблицы размера length, по которому лежит объект
+     */
+    private static int getIndex(Object o, int length) {
         return o != null ? Math.abs(o.hashCode() % length) : 0;
     }
 
-    // вспомогательный метод getMinNeedLength вычисляет минимальный необходимый размер массива хэш-таблицы
+    /**
+     * вспомогательный метод getIndex вычисляет индекс в массиве текущей хэш-таблицы, по которому лежит объект
+     */
+    private int getIndex(Object o) {
+        return o != null ? Math.abs(o.hashCode() % lists.length) : 0;
+    }
+
+    /**
+     * вспомогательный метод getMinNeedLength вычисляет минимальный необходимый размер массива хэш-таблицы
+     */
     private int getMinNeedLength(int size, double loadFactor) {
         return (int) Math.ceil(size / loadFactor);
     }
 
-    // вспомогательный метод createListIfNull создает список по индексу в массиве хэш-таблицы, если он не был создан ранее
+    /**
+     * вспомогательный метод createListIfNull создает список по индексу в массиве хэш-таблицы, если он не был создан ранее
+     */
     private void createListIfNull(int index) {
         if (lists[index] == null) {
             lists[index] = new LinkedList<>();
@@ -84,56 +110,37 @@ public class MyHashTable<E> implements Collection<E> {
 
     private void increaseLength(int newLength) {
         //noinspection unchecked
-        LinkedList<E>[] tempLists = (LinkedList<E>[]) new LinkedList[newLength];
+        LinkedList<E>[] newLists = (LinkedList<E>[]) new LinkedList[newLength];
 
         for (E element : this) {
             int index = getIndex(element, newLength);
 
-            if (tempLists[index] == null) {
-                tempLists[index] = new LinkedList<>();
+            if (newLists[index] == null) {
+                newLists[index] = new LinkedList<>();
             }
 
-            tempLists[index].add(element);
+            newLists[index].add(element);
         }
 
-        lists = Arrays.copyOf(tempLists, newLength);
+        lists = newLists;
         ++modCount;
     }
 
     private class MyHashTableIterator implements Iterator<E> {
-        private int currentIndex;
-        /* поле gotElementsCount хранит количество элементов в списке, по которым итератор уже прошелся
-        за счет этого при следующем вызове итератор продолжает идти в этом списке с того места, где он остановился
-        при прошлом вызовет
+        private int currentListIndex;
+        private Iterator<E> currentListIterator;
+
+        /**
+         * Поле passedElementsCount хранит количество элементов в списке, по которым итератор уже прошелся.
+         * За счет этого при следующем вызове итератор продолжает идти в этом списке с того места, где он остановился
+         * при прошлом вызове.
          */
-        private int gotElementsCount;
+        private int passedElementsCount;
         private final int initialModCount = modCount;
 
         @Override
         public boolean hasNext() {
-            if (lists[currentIndex] != null) {
-                Iterator<E> listIterator = lists[currentIndex].iterator();
-
-                for (int i = 0; i < gotElementsCount; ++i) {
-                    listIterator.next();
-                }
-
-                if (listIterator.hasNext()) {
-                    return true;
-                }
-            }
-
-            for (int i = currentIndex + 1; i < lists.length; ++i) {
-                if (lists[i] != null) {
-                    Iterator<E> listIterator = lists[i].iterator();
-
-                    if (listIterator.hasNext()) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
+            return passedElementsCount < size;
         }
 
         @Override
@@ -143,40 +150,33 @@ public class MyHashTable<E> implements Collection<E> {
             }
 
             if (initialModCount != modCount) {
-                throw new ConcurrentModificationException("В процессе обхода хэш-таблицы изменился массив " +
-                        "хэш-таблицы.");
+                throw new ConcurrentModificationException("В процессе обхода хэш-таблицы изменился массив хэш-таблицы.");
             }
 
-            if (lists[currentIndex] != null) {
-                Iterator<E> listIterator = lists[currentIndex].iterator();
-
-                for (int i = 0; i < gotElementsCount; ++i) {
-                    listIterator.next();
+            if (passedElementsCount > 0) {
+                if (currentListIterator.hasNext()) {
+                    ++passedElementsCount;
+                    return currentListIterator.next();
                 }
 
-                if (listIterator.hasNext()) {
-                    E currentElement = listIterator.next();
-                    ++gotElementsCount;
-                    return currentElement;
+                ++currentListIndex;
+
+                while (lists[currentListIndex] == null || lists[currentListIndex].size() == 0) {
+                    ++currentListIndex;
                 }
+
+                currentListIterator = lists[currentListIndex].iterator();
+                ++passedElementsCount;
+                return currentListIterator.next();
             }
 
-            gotElementsCount = 0;
-            ++currentIndex;
-
-            for (; currentIndex < lists.length; ++currentIndex) {
-                if (lists[currentIndex] != null) {
-                    Iterator<E> listIterator = lists[currentIndex].iterator();
-
-                    if (listIterator.hasNext()) {
-                        E currentElement = listIterator.next();
-                        ++gotElementsCount;
-                        return currentElement;
-                    }
-                }
+            while (lists[currentListIndex] == null || lists[currentListIndex].size() == 0) {
+                ++currentListIndex;
             }
 
-            throw new NoSuchElementException("В хэш-таблице больше нет объектов.");
+            currentListIterator = lists[currentListIndex].iterator();
+            ++passedElementsCount;
+            return currentListIterator.next();
         }
 
         @Override
@@ -185,37 +185,20 @@ public class MyHashTable<E> implements Collection<E> {
                 throw new NoSuchElementException("В хэш-таблице больше нет объектов.");
             }
 
-            if (lists[currentIndex] != null) {
-                --gotElementsCount;
-                Iterator<E> listIterator = lists[currentIndex].iterator();
-
-                for (int i = 0; i < gotElementsCount; ++i) {
-                    listIterator.next();
-                }
-
-                if (listIterator.hasNext()) {
-                    listIterator.next();
-                    listIterator.remove();
-                    --size;
-                    return;
-                }
+            if (passedElementsCount > 0) {
+                currentListIterator.remove();
+                --size;
+                return;
             }
 
-            ++currentIndex;
-            gotElementsCount = 0;
-
-            for (; currentIndex < lists.length; ++currentIndex) {
-                if (lists[currentIndex] != null) {
-                    Iterator<E> listIterator = lists[currentIndex].iterator();
-
-                    if (listIterator.hasNext()) {
-                        listIterator.next();
-                        listIterator.remove();
-                        --size;
-                        return;
-                    }
-                }
+            while (lists[currentListIndex] == null || lists[currentListIndex].size() == 0) {
+                ++currentListIndex;
             }
+
+            currentListIterator = lists[currentListIndex].iterator();
+            currentListIterator.next();
+            currentListIterator.remove();
+            --size;
         }
     }
 
@@ -226,11 +209,7 @@ public class MyHashTable<E> implements Collection<E> {
 
     @Override
     public boolean isEmpty() {
-        if (lists.length == 0) {
-            return true;
-        }
-
-        return !iterator().hasNext();
+        return size == 0;
     }
 
     @Override
@@ -248,10 +227,11 @@ public class MyHashTable<E> implements Collection<E> {
             }
         }
 
-        int index = getIndex(element, lists.length);
+        int index = getIndex(element);
         createListIfNull(index);
         lists[index].add(element);
         ++size;
+        ++modCount;
         return true;
     }
 
@@ -280,20 +260,19 @@ public class MyHashTable<E> implements Collection<E> {
             return false;
         }
 
-        int index = getIndex(o, lists.length);
+        int index = getIndex(o);
 
-        if (lists[index] == null) {
-            return false;
-        } else {
-            boolean isRemovedElement = lists[index].remove(o);
-
-            if (isRemovedElement) {
-                --size;
-                return true;
-            }
-
+        if (lists[index] == null || lists[index].isEmpty()) {
             return false;
         }
+
+        if (lists[index].remove(o)) {
+            --size;
+            ++modCount;
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -309,16 +288,21 @@ public class MyHashTable<E> implements Collection<E> {
         int initialSize = size;
 
         for (Object element : c) {
-            int index = getIndex(element, lists.length);
+            int index = getIndex(element);
 
-            if (lists[index] != null) {
+            if (lists[index] != null && !lists[index].isEmpty()) {
                 int initialListSize = lists[index].size();
                 lists[index].removeAll(Collections.singleton(element));
                 size -= initialListSize - lists[index].size();
             }
         }
 
-        return initialSize != size;
+        if (initialSize != size) {
+            ++modCount;
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -327,9 +311,14 @@ public class MyHashTable<E> implements Collection<E> {
             return;
         }
 
-        while (iterator().hasNext()) {
-            iterator().remove();
+        for (LinkedList<E> list : lists) {
+            if (list != null && !list.isEmpty()) {
+                list.clear();
+            }
         }
+
+        size = 0;
+        ++modCount;
     }
 
     @Override
@@ -340,31 +329,17 @@ public class MyHashTable<E> implements Collection<E> {
 
         int index = getIndex(o, lists.length);
 
-        if (lists[index] != null) {
-            for (E element : lists[getIndex(o, lists.length)]) {
-                if (Objects.equals(element, o)) {
-                    return true;
-                }
-            }
+        if (lists[index] == null || lists[index].isEmpty()) {
+            return false;
         }
 
-        return false;
+        return lists[index].contains(o);
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        if (size == 0) {
-            return false;
-        }
-
-        if (c.isEmpty()) {
-            return true;
-        }
-
         for (Object collectionElement : c) {
-            boolean hasCollectionElement = contains(collectionElement);
-
-            if (!hasCollectionElement) {
+            if (!contains(collectionElement)) {
                 return false;
             }
         }
@@ -379,68 +354,60 @@ public class MyHashTable<E> implements Collection<E> {
         }
 
         if (c.isEmpty()) {
-            throw new NullPointerException("При вызове метода retainAll в качестве аргумента передана пустая коллекция." +
-                    " Коллекция должна содержать хотя бы один объект.");
+            clear();
+            return true;
         }
 
-        boolean isRemovedElement = false;
+        boolean isElementRemoved = false;
 
-        for (Iterator<E> i = iterator(); i.hasNext(); ) {
-            if (!c.contains(i.next())) {
-                i.remove();
-                isRemovedElement = true;
+        for (Iterator<E> iterator = iterator(); iterator.hasNext(); ) {
+            if (!c.contains(iterator.next())) {
+                iterator.remove();
+                isElementRemoved = true;
             }
         }
 
-        return isRemovedElement;
+        if (isElementRemoved) {
+            ++modCount;
+            return true;
+        }
+
+        return false;
     }
 
     @Override
     public Object[] toArray() {
-        if (size == 0) {
-            return new Object[0];
-        }
-
-        Object[] destinationArray = new Object[size];
+        Object[] resultingArray = new Object[size];
 
         int i = 0;
 
         for (E element : this) {
-            destinationArray[i] = element;
+            resultingArray[i] = element;
             ++i;
         }
 
-        return destinationArray;
+        return resultingArray;
     }
 
     public <T> T[] toArray(T[] array) {
-        if (size == 0) {
-            return array;
+        if (array.length < size) {
+            //noinspection unchecked
+            return (T[]) Arrays.copyOf(toArray(), size, array.getClass());
         }
-
-        if (array.length >= size) {
-            int i = 0;
-
-            for (E element : this) {
-                //noinspection unchecked
-                array[i] = (T) element;
-                ++i;
-            }
-
-            return array;
-        }
-
-        T[] destinationArray = Arrays.copyOf(array, size);
 
         int i = 0;
 
         for (E element : this) {
             //noinspection unchecked
-            destinationArray[i] = (T) element;
+            array[i] = (T) element;
             ++i;
         }
 
-        return destinationArray;
+        if (array.length > size) {
+            Arrays.fill(array, size, array.length, null);
+        }
+
+        return array;
     }
 
     @Override
