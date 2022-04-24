@@ -6,7 +6,7 @@ public class MyHashTable<E> implements Collection<E> {
     /**
      * в переменной initialLength хранится размер массива хэш-таблицы по умолчанию
      */
-    public static final int initialLength = 16;
+    public static final int INITIAL_LENGTH = 16;
 
     private LinkedList<E>[] lists;
 
@@ -29,7 +29,7 @@ public class MyHashTable<E> implements Collection<E> {
 
     public MyHashTable() {
         //noinspection unchecked
-        lists = (LinkedList<E>[]) new LinkedList[initialLength];
+        lists = (LinkedList<E>[]) new LinkedList[INITIAL_LENGTH];
     }
 
     public MyHashTable(int initialLength) {
@@ -61,7 +61,7 @@ public class MyHashTable<E> implements Collection<E> {
     public MyHashTable(Collection<? extends E> c) {
         if (c.isEmpty()) {
             //noinspection unchecked
-            lists = (LinkedList<E>[]) new LinkedList[initialLength];
+            lists = (LinkedList<E>[]) new LinkedList[INITIAL_LENGTH];
             return;
         }
 
@@ -221,7 +221,7 @@ public class MyHashTable<E> implements Collection<E> {
     public boolean add(E element) {
         if (getMinNeedLength(size + 1, loadFactor) > lists.length) {
             if (lists.length == 0) {
-                increaseLength(initialLength);
+                increaseLength(INITIAL_LENGTH);
             } else {
                 increaseLength(lists.length * 2);
             }
@@ -404,7 +404,7 @@ public class MyHashTable<E> implements Collection<E> {
         }
 
         if (array.length > size) {
-            Arrays.fill(array, size, array.length, null);
+            array[size] = null;
         }
 
         return array;
