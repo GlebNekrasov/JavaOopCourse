@@ -3,7 +3,7 @@ package ru.academits.nekrasovgleb.myarraylist;
 import java.util.*;
 
 public class MyArrayList<E> implements List<E> {
-    public static final int defaultCapacity = 10;
+    public static final int DEFAULT_CAPACITY = 10;
 
     private E[] items;
     private int size;
@@ -11,7 +11,7 @@ public class MyArrayList<E> implements List<E> {
 
     public MyArrayList() {
         //noinspection unchecked
-        items = (E[]) new Object[defaultCapacity];
+        items = (E[]) new Object[DEFAULT_CAPACITY];
     }
 
     public MyArrayList(int capacity) {
@@ -64,7 +64,7 @@ public class MyArrayList<E> implements List<E> {
     private void increaseCapacity() {
         if (items.length == 0) {
             //noinspection unchecked
-            items = (E[]) new Object[defaultCapacity];
+            items = (E[]) new Object[DEFAULT_CAPACITY];
         } else {
             items = Arrays.copyOf(items, items.length * 2);
         }
@@ -298,7 +298,7 @@ public class MyArrayList<E> implements List<E> {
         System.arraycopy(items, 0, array, 0, size);
 
         if (array.length > size) {
-            Arrays.fill(array, size, array.length, null);
+            array[size] = null;
         }
 
         return array;
