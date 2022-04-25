@@ -51,7 +51,7 @@ public class Main {
         Stream.of(averageAgeByNames).forEach(x -> System.out.println(x.entrySet()));
         System.out.println();
 
-        // пунет Д - получить людей, возраст которых от 20 до 45, вывести в консоль их имена в порядке убывания возраста
+        // пункт Д - получить людей, возраст которых от 20 до 45, вывести в консоль их имена в порядке убывания возраста
         List<Person> from20To45Persons = persons.stream()
                 .filter(x -> (x.getAge() >= 20 & x.getAge() <= 45))
                 .sorted((p1, p2) -> p2.getAge() - p1.getAge())
