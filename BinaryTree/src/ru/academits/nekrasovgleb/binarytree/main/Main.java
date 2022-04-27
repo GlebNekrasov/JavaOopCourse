@@ -52,6 +52,5 @@ public class Main {
         System.out.println("Список элементов дерева при обходе дерева в ширину:");
         tree1.traverseByWidth(printToConsole);
         System.out.println();
-
     }
 }
