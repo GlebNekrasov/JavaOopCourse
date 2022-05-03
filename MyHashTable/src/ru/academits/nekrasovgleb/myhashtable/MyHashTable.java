@@ -4,32 +4,29 @@ import java.util.*;
 
 public class MyHashTable<E> implements Collection<E> {
     /**
-     * в переменной initialLength хранится размер массива хэш-таблицы по умолчанию
+     * Размер массива хэш-таблицы по умолчанию.
      */
     public static final int INITIAL_LENGTH = 16;
 
     private LinkedList<E>[] lists;
 
     /**
-     * в переменной size хранится количество объектов, находящихся в хэш-таблице
+     * Количество объектов, находящихся в хэш-таблице.
      */
     private int size;
 
     /**
-     * по аналогии с классом HashSet используется переменная loadFactor для управления отношением между количеством
-     * объектов в хэш-таблице и размером массива хэш-таблицы - чтобы повысить вероятность наличия в конкретном элементе
-     * массива хэш-таблицы только одного объекта, тем самым ускорив поиск объектов в хэш-таблице
+     * Отношение между количеством объектов в хэш-таблице и размером массива хэш-таблицы.
      */
     private double loadFactor = 0.75;
 
     /**
-     * переменная modCount используется в итераторе хэш-таблицы для событий удаления/добавления элементов массива хэш-таблицы
+     * Количество событий добавления/удаления элементов в хэш-таблице. Используется в итераторе хэш-таблицы.
      */
     private int modCount;
 
     public MyHashTable() {
-        //noinspection unchecked
-        lists = (LinkedList<E>[]) new LinkedList[INITIAL_LENGTH];
+        this(INITIAL_LENGTH);
     }
 
     public MyHashTable(int initialLength) {
@@ -79,28 +76,28 @@ public class MyHashTable<E> implements Collection<E> {
     }
 
     /**
-     * вспомогательный метод getIndex вычисляет индекс в массиве хэш-таблицы размера length, по которому лежит объект
+     * Вычисляет индекс в массиве хэш-таблицы размера length, по которому лежит объект.
      */
     private static int getIndex(Object o, int length) {
         return o != null ? Math.abs(o.hashCode() % length) : 0;
     }
 
     /**
-     * вспомогательный метод getIndex вычисляет индекс в массиве текущей хэш-таблицы, по которому лежит объект
+     * Вычисляет индекс в массиве текущей хэш-таблицы, по которому лежит объект.
      */
     private int getIndex(Object o) {
-        return o != null ? Math.abs(o.hashCode() % lists.length) : 0;
+        return getIndex(o, lists.length);
     }
 
     /**
-     * вспомогательный метод getMinNeedLength вычисляет минимальный необходимый размер массива хэш-таблицы
+     * Вычисляет минимальный необходимый размер массива хэш-таблицы.
      */
     private int getMinNeedLength(int size, double loadFactor) {
         return (int) Math.ceil(size / loadFactor);
     }
 
     /**
-     * вспомогательный метод createListIfNull создает список по индексу в массиве хэш-таблицы, если он не был создан ранее
+     * Создает список по индексу в массиве хэш-таблицы, если по этому индексу в массиве еще нет списка.
      */
     private void createListIfNull(int index) {
         if (lists[index] == null) {
@@ -131,9 +128,7 @@ public class MyHashTable<E> implements Collection<E> {
         private Iterator<E> currentListIterator;
 
         /**
-         * Поле passedElementsCount хранит количество элементов в списке, по которым итератор уже прошелся.
-         * За счет этого при следующем вызове итератор продолжает идти в этом списке с того места, где он остановился
-         * при прошлом вызове.
+         * Хранит количество элементов в списке, по которым итератор уже прошелся.
          */
         private int passedElementsCount;
         private final int initialModCount = modCount;
@@ -187,6 +182,7 @@ public class MyHashTable<E> implements Collection<E> {
 
             if (passedElementsCount > 0) {
                 currentListIterator.remove();
+                ++modCount;
                 --size;
                 return;
             }
@@ -198,6 +194,7 @@ public class MyHashTable<E> implements Collection<E> {
             currentListIterator = lists[currentListIndex].iterator();
             currentListIterator.next();
             currentListIterator.remove();
+            ++modCount;
             --size;
         }
     }
@@ -268,7 +265,6 @@ public class MyHashTable<E> implements Collection<E> {
 
         if (lists[index].remove(o)) {
             --size;
-            ++modCount;
             return true;
         }
 
@@ -327,7 +323,7 @@ public class MyHashTable<E> implements Collection<E> {
             return false;
         }
 
-        int index = getIndex(o, lists.length);
+        int index = getIndex(o);
 
         if (lists[index] == null || lists[index].isEmpty()) {
             return false;
@@ -360,10 +356,15 @@ public class MyHashTable<E> implements Collection<E> {
 
         boolean isElementRemoved = false;
 
-        for (Iterator<E> iterator = iterator(); iterator.hasNext(); ) {
-            if (!c.contains(iterator.next())) {
-                iterator.remove();
-                isElementRemoved = true;
+        for (LinkedList<E> list : lists) {
+            if (list != null && !list.isEmpty()) {
+                int initialListSize = list.size();
+                boolean isListModified = list.retainAll(c);
+
+                if (isListModified) {
+                    isElementRemoved = true;
+                    size -= initialListSize - list.size();
+                }
             }
         }
 
