@@ -41,7 +41,7 @@ public class Main {
         System.out.println();
         System.out.println();
 
-        System.out.println("Дерево содержит элемент \"11?\" - " + tree1.contains(11));
+        System.out.println("Дерево содержит элемент \"11\"? - " + tree1.contains(11));
         System.out.println();
 
         boolean isRemoved = tree1.remove(20);
