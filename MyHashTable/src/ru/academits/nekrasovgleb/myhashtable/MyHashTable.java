@@ -92,7 +92,7 @@ public class MyHashTable<E> implements Collection<E> {
     /**
      * Вычисляет минимальный необходимый размер массива хэш-таблицы.
      */
-    private int getMinNeedLength(int size, double loadFactor) {
+    private static int getMinNeedLength(int size, double loadFactor) {
         return (int) Math.ceil(size / loadFactor);
     }
 
@@ -131,11 +131,12 @@ public class MyHashTable<E> implements Collection<E> {
          * Хранит количество элементов в списке, по которым итератор уже прошелся.
          */
         private int passedElementsCount;
-        private final int initialModCount = modCount;
+        private int initialModCount = modCount;
+        private final int initialSize = size;
 
         @Override
         public boolean hasNext() {
-            return passedElementsCount < size;
+            return passedElementsCount < initialSize;
         }
 
         @Override
@@ -176,25 +177,17 @@ public class MyHashTable<E> implements Collection<E> {
 
         @Override
         public void remove() {
-            if (!hasNext()) {
-                throw new NoSuchElementException("В хэш-таблице больше нет объектов.");
+            if (initialModCount != modCount) {
+                throw new ConcurrentModificationException("В процессе обхода хэш-таблицы изменился массив хэш-таблицы.");
             }
 
-            if (passedElementsCount > 0) {
-                currentListIterator.remove();
-                ++modCount;
-                --size;
-                return;
+            if (passedElementsCount == 0) {
+                throw new IllegalStateException("Перед использованием метода remove() итератора не был вызван метод next()");
             }
 
-            while (lists[currentListIndex] == null || lists[currentListIndex].size() == 0) {
-                ++currentListIndex;
-            }
-
-            currentListIterator = lists[currentListIndex].iterator();
-            currentListIterator.next();
             currentListIterator.remove();
             ++modCount;
+            ++initialModCount;
             --size;
         }
     }
@@ -265,6 +258,7 @@ public class MyHashTable<E> implements Collection<E> {
 
         if (lists[index].remove(o)) {
             --size;
+            ++modCount;
             return true;
         }
 
