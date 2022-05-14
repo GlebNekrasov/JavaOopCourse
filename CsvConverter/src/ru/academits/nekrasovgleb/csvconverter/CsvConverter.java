@@ -9,6 +9,9 @@ public class CsvConverter {
     private int firstCharIndex;
     private int lastCharIndex;
 
+    public CsvConverter() {
+    }
+
     public void convertCsv(String fileName) {
         LinkedList<String> csvLinesList = readCsvFile(fileName);
 
