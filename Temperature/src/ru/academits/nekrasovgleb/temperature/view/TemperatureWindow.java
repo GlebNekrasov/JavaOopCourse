@@ -1,6 +1,7 @@
 package ru.academits.nekrasovgleb.temperature.view;
 
 import ru.academits.nekrasovgleb.temperature.converter.TemperatureConverter;
+import ru.academits.nekrasovgleb.temperature.converter.TemperatureScale;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +22,8 @@ public class TemperatureWindow implements View {
 
             JFrame frame = new JFrame("Конвертер температуры");
 
-            frame.setSize(600, 400);
+            frame.setSize(800, 500);
+            frame.setMinimumSize(new Dimension(700, 400));
             frame.setLocationRelativeTo(null);
             frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -42,9 +44,10 @@ public class TemperatureWindow implements View {
             chooseScaleFromLabel.setFont(labelsFont);
             panel.add(chooseScaleFromLabel, c);
 
-            JComboBox<TemperatureConverter.TemperatureScale> scaleFromComboBox = new JComboBox<>(TemperatureConverter.TemperatureScale.values());
+            JComboBox<TemperatureScale> scaleFromComboBox = new JComboBox<>(TemperatureConverter.SCALES);
             scaleFromComboBox.setFont(textFieldsFont);
-            scaleFromComboBox.addActionListener(e -> temperatureConverter.setScaleFrom((TemperatureConverter.TemperatureScale) scaleFromComboBox.getSelectedItem()));
+            scaleFromComboBox.addActionListener(e ->
+                    temperatureConverter.setScaleFrom((TemperatureScale) scaleFromComboBox.getSelectedItem()));
 
             c.gridy = 2;
             panel.add(scaleFromComboBox, c);
@@ -70,9 +73,10 @@ public class TemperatureWindow implements View {
             c.gridy = 7;
             panel.add(chooseScaleToLabel, c);
 
-            JComboBox<TemperatureConverter.TemperatureScale> scaleToComboBox = new JComboBox<>(TemperatureConverter.TemperatureScale.values());
+            JComboBox<TemperatureScale> scaleToComboBox = new JComboBox<>(TemperatureConverter.SCALES);
             scaleToComboBox.setFont(textFieldsFont);
-            scaleToComboBox.addActionListener(e -> temperatureConverter.setScaleTo((TemperatureConverter.TemperatureScale) scaleToComboBox.getSelectedItem()));
+            scaleToComboBox.addActionListener(e ->
+                    temperatureConverter.setScaleTo((TemperatureScale) scaleToComboBox.getSelectedItem()));
 
             c.gridy = 8;
             panel.add(scaleToComboBox, c);
