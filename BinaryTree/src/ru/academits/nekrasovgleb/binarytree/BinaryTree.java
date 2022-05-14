@@ -9,19 +9,19 @@ import java.util.function.Consumer;
 public class BinaryTree<T> {
     private TreeNode<T> root;
     private int size;
-    private final Comparator<T> treeComparator;
+    private final Comparator<T> comparator;
 
     public BinaryTree() {
-        treeComparator = null;
+        comparator = null;
     }
 
     public BinaryTree(Comparator<T> comparator) {
-        treeComparator = comparator;
+        this.comparator = comparator;
     }
 
     public int compare(T data1, T data2) {
-        if (treeComparator != null) {
-            return treeComparator.compare(data1, data2);
+        if (comparator != null) {
+            return comparator.compare(data1, data2);
         }
 
         if (data1 != null && data2 != null) {
@@ -29,7 +29,7 @@ public class BinaryTree<T> {
             return ((Comparable<T>) data1).compareTo(data2);
         }
 
-        if (data1 == null && data2 != null) {
+        if (data2 != null) {
             return -1;
         }
 
