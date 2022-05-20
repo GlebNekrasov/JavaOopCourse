@@ -1,6 +1,6 @@
 package ru.academits.nekrasovgleb.temperature.converter;
 
-public class KelvinScale implements TemperatureScale {
+public class KelvinScale extends TemperatureScale {
     @Override
     public double convertToCelsius(double temperature) {
         return temperature - 273.15;

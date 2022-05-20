@@ -1,10 +1,27 @@
 package ru.academits.nekrasovgleb.temperature.converter;
 
-public class TemperatureConverter {
-    public static final TemperatureScale[] SCALES = {new CelsiusScale(), new FahrenheitScale(), new KelvinScale()};
+import java.util.Arrays;
 
-    private TemperatureScale scaleFrom = new CelsiusScale();
-    private TemperatureScale scaleTo = new CelsiusScale();
+public class TemperatureConverter {
+    private final TemperatureScale[] scales;
+
+    private TemperatureScale scaleFrom;
+    private TemperatureScale scaleTo;
+
+    public TemperatureConverter(TemperatureScale[] scales) {
+        if (scales.length == 0) {
+            throw new IllegalArgumentException("При создании модели конвертера передан пустой массив температурных шкал." +
+                    "Массив должен содержать не меньше 1 шкалы.");
+        }
+
+        this.scales = Arrays.copyOf(scales, scales.length);
+        scaleFrom = scales[0];
+        scaleTo = scales[0];
+    }
+
+    public TemperatureScale[] getScales() {
+        return scales;
+    }
 
     public void setScaleFrom(TemperatureScale scaleFrom) {
         this.scaleFrom = scaleFrom;

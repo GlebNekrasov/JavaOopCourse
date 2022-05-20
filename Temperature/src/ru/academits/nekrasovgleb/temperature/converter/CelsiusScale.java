@@ -1,6 +1,6 @@
 package ru.academits.nekrasovgleb.temperature.converter;
 
-public class CelsiusScale implements TemperatureScale {
+public class CelsiusScale extends TemperatureScale {
     @Override
     public double convertToCelsius(double temperature) {
         return temperature;

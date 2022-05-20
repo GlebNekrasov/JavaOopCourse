@@ -44,7 +44,7 @@ public class TemperatureWindow implements View {
             chooseScaleFromLabel.setFont(labelsFont);
             panel.add(chooseScaleFromLabel, c);
 
-            JComboBox<TemperatureScale> scaleFromComboBox = new JComboBox<>(TemperatureConverter.SCALES);
+            JComboBox<TemperatureScale> scaleFromComboBox = new JComboBox<>(temperatureConverter.getScales());
             scaleFromComboBox.setFont(textFieldsFont);
             scaleFromComboBox.addActionListener(e ->
                     temperatureConverter.setScaleFrom((TemperatureScale) scaleFromComboBox.getSelectedItem()));
@@ -73,7 +73,7 @@ public class TemperatureWindow implements View {
             c.gridy = 7;
             panel.add(chooseScaleToLabel, c);
 
-            JComboBox<TemperatureScale> scaleToComboBox = new JComboBox<>(TemperatureConverter.SCALES);
+            JComboBox<TemperatureScale> scaleToComboBox = new JComboBox<>(temperatureConverter.getScales());
             scaleToComboBox.setFont(textFieldsFont);
             scaleToComboBox.addActionListener(e ->
                     temperatureConverter.setScaleTo((TemperatureScale) scaleToComboBox.getSelectedItem()));

@@ -1,10 +1,10 @@
 package ru.academits.nekrasovgleb.temperature.converter;
 
-public interface TemperatureScale {
-    double convertToCelsius(double temperature);
+public abstract class TemperatureScale {
+    public abstract double convertToCelsius(double temperature);
 
-    double convertFromCelsius(double temperature);
+    public abstract double convertFromCelsius(double temperature);
 
     @Override
-    String toString();
+    public abstract String toString();
 }

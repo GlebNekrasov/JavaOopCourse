@@ -1,6 +1,6 @@
 package ru.academits.nekrasovgleb.temperature.converter;
 
-public class FahrenheitScale implements TemperatureScale {
+public class FahrenheitScale extends TemperatureScale {
     @Override
     public double convertToCelsius(double temperature) {
         return (temperature - 32) * 5 / 9;
