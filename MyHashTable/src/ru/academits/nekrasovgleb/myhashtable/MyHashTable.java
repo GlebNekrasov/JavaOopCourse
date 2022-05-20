@@ -132,11 +132,10 @@ public class MyHashTable<E> implements Collection<E> {
          */
         private int passedElementsCount;
         private int initialModCount = modCount;
-        private final int initialSize = size;
 
         @Override
         public boolean hasNext() {
-            return passedElementsCount < initialSize;
+            return passedElementsCount < size;
         }
 
         @Override
@@ -189,6 +188,7 @@ public class MyHashTable<E> implements Collection<E> {
             ++modCount;
             ++initialModCount;
             --size;
+            --passedElementsCount;
         }
     }
 
