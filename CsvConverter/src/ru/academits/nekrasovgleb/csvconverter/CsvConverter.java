@@ -1,168 +1,221 @@
 package ru.academits.nekrasovgleb.csvconverter;
 
 import java.io.*;
-import java.util.LinkedList;
 
 public class CsvConverter {
-    private boolean isNewLine = true;
-    private boolean isFinishedCell = true;
-    private int firstCharIndex;
-    private int lastCharIndex;
+    private String csvFileName;
+    private String htmlFileName;
+    private String htmlTitle;
+    private boolean isBeginningLine;
+    private boolean isEndLine;
+    private boolean isBeginningCell;
+    private boolean isEndCell;
+    private boolean isCellInQuotes;
+    private boolean isPreviousSymbolQuote;
 
     public CsvConverter() {
     }
 
-    public void convertCsv(String fileName) {
-        LinkedList<String> csvLinesList = readCsvFile(fileName);
+    public void convertCsv(String csvFileName, String htmlFileName, String htmlTitle) {
+        this.csvFileName = csvFileName;
+        this.htmlFileName = htmlFileName;
+        this.htmlTitle = htmlTitle;
 
-        if (csvLinesList.isEmpty()) {
-            throw new IllegalArgumentException("В качестве аргумента передана пустая таблица");
+        if (!checkCsvFile()) {
+            throw new IllegalArgumentException("В качестве аргумента передано название CSV-файла, который не удалось прочитать.");
         }
 
-        LinkedList<String> htmlLinesList = new LinkedList<>();
-        htmlLinesList.add("<table>");
+        writeOpeningTags();
 
-        for (String csvLine : csvLinesList) {
-            htmlLinesList.add(convertCsvLine(csvLine, isNewLine));
-        }
+        isBeginningCell = true;
+        isEndCell = false;
+        isCellInQuotes = false;
+        isPreviousSymbolQuote = false;
 
-        htmlLinesList.add("</table>");
-        writeHtmlFile(htmlLinesList);
-    }
+        try (BufferedReader reader = new BufferedReader(new FileReader(csvFileName))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(htmlFileName, true))) {
+                String nextSymbol;
 
-    private LinkedList<String> readCsvFile(String fileName) {
-        LinkedList<String> linesList = new LinkedList<>();
+                for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                    if (line.length() == 0) {
+                        isBeginningLine = true;
+                        isEndLine = true;
+                        nextSymbol = "";
+                        String convertedSymbol = convertSymbol(nextSymbol);
+                        writer.write(convertedSymbol);
+                        continue;
+                    }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                linesList.add(line);
+                    for (int i = 0; i < line.length(); ++i) {
+                        nextSymbol = Character.toString(line.charAt(i));
+                        isBeginningLine = i == 0;
+                        isEndLine = i == line.length() - 1;
+                        String convertedSymbol = convertSymbol(nextSymbol);
+                        writer.write(convertedSymbol);
+                    }
+                }
+            } catch (IOException e) {
+                System.exit(0);
             }
-        } catch (FileNotFoundException e) {
-            System.out.println("Не удалось найти файл: " + e.getMessage());
-        } catch (IOException e) {
-            System.out.println("При попытке прочитать файл произошла ошибка: " + e.getMessage());
+        } catch (IOException e2) {
+            System.exit(0);
         }
 
-        return linesList;
+        writeClosingTags();
     }
 
-    private void writeHtmlFile(LinkedList<String> htmlLinesList) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("HTML_Table.html"))) {
-            for (String line : htmlLinesList) {
-                writer.write(line);
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            System.out.println("При попытке записать данные в файл произошла ошибка: " + e.getMessage());
+    private String convertSymbol(String symbol) {
+        switch (symbol) {
+            case "<" -> symbol = "&lt";
+            case ">" -> symbol = "&gt";
+            case "&" -> symbol = "&amp";
         }
-    }
 
-    private String convertCsvLine(String csvLine, boolean isNewLine) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        firstCharIndex = 0;
-        lastCharIndex = 0;
-
-        if (isNewLine) {
+        if (isBeginningLine && isBeginningCell) {
             stringBuilder.append("<tr>");
-        } else {
-            String cellContinuation = getCellContinuation(csvLine);
-            stringBuilder.append(cellContinuation);
-
-            if (isFinishedCell) {
-                stringBuilder.append("</td>");
-            } else {
-                this.isNewLine = false;
-                return stringBuilder.toString();
-            }
         }
 
-        while (lastCharIndex < csvLine.length()) {
+        if (isBeginningCell) {
             stringBuilder.append("<td>");
-            String nextCell = getNextCell(csvLine, firstCharIndex);
-            stringBuilder.append(nextCell);
 
-            if (isFinishedCell) {
-                stringBuilder.append("</td>");
+            if (symbol.equals("\"")) {
+                symbol = "";
+                isCellInQuotes = true;
+                isBeginningCell = false;
+            } else if (symbol.equals(",")) {
+                symbol = "";
+                isEndCell = true;
+            } else if (isEndLine) {
+                isEndCell = true;
+                isBeginningCell = false;
             } else {
-                this.isNewLine = false;
-                return stringBuilder.toString();
+                isBeginningCell = false;
+            }
+
+            stringBuilder.append(symbol);
+        } else {
+            if (!isCellInQuotes) {
+                if (symbol.equals("\"")) {
+                    if (isPreviousSymbolQuote) {
+                        symbol = "\"";
+                        isPreviousSymbolQuote = false;
+                    } else {
+                        symbol = "";
+                        isPreviousSymbolQuote = true;
+                    }
+
+                    stringBuilder.append(symbol);
+                } else if (symbol.equals(",")) {
+                    symbol = "";
+                    isEndCell = true;
+                    stringBuilder.append(symbol);
+                } else {
+                    stringBuilder.append(symbol);
+                }
+
+                if (isEndLine) {
+                    isEndCell = true;
+                }
+            } else if (symbol.equals("\"")) {
+                if (isPreviousSymbolQuote) {
+                    symbol = "\"";
+                    isPreviousSymbolQuote = false;
+                } else if (isEndLine) {
+                    symbol = "";
+                    isCellInQuotes = false;
+                    isEndCell = true;
+                } else {
+                    symbol = "";
+                    isPreviousSymbolQuote = true;
+                }
+
+                stringBuilder.append(symbol);
+            } else if (symbol.equals(",")) {
+                if (isPreviousSymbolQuote) {
+                    symbol = "";
+                    isPreviousSymbolQuote = false;
+                    isCellInQuotes = false;
+                    isEndCell = true;
+                } else {
+                    symbol = ",";
+                }
+
+                stringBuilder.append(symbol);
+            } else {
+                stringBuilder.append(symbol);
             }
         }
 
-        stringBuilder.append("</tr>");
-        this.isNewLine = true;
+        if (isEndCell) {
+            stringBuilder.append("</td>");
+        }
+
+        if (isEndLine && isEndCell) {
+            stringBuilder.append("</tr>");
+        }
+
+        if (isEndLine && !isEndCell) {
+            stringBuilder.append("<br/>");
+        }
+
+        if (isEndCell) {
+            isEndCell = false;
+            isBeginningCell = true;
+        }
+
         return stringBuilder.toString();
     }
 
-    private String getCellContinuation(String csvLine) {
-        int firstIndexWithoutQuote = firstCharIndex;
+    private boolean checkCsvFile() {
+        try (FileReader reader = new FileReader(csvFileName)) {
+            int firstSymbol = reader.read();
 
-        while (true) {
-            lastCharIndex = csvLine.indexOf("\"", firstIndexWithoutQuote);
-            String cellContinuation;
-
-            if (lastCharIndex == -1) {
-                cellContinuation = csvLine.substring(firstCharIndex);
-                cellContinuation = cellContinuation.replace("\"\"", "\"");
-                cellContinuation = cellContinuation + "<br/>";
-                isFinishedCell = false;
-                lastCharIndex = csvLine.length();
-                return cellContinuation;
+            if (firstSymbol == -1) {
+                throw new IllegalArgumentException("В качестве аргумента передано название пустого CSV-файла. " +
+                        "Файл должен содержать не меньше 1 символа.");
             }
 
-            if (lastCharIndex == csvLine.length() - 1) {
-                cellContinuation = csvLine.substring(firstCharIndex, lastCharIndex);
-                cellContinuation = cellContinuation.replace("\"\"", "\"");
-                isFinishedCell = true;
-                lastCharIndex = csvLine.length();
-                return cellContinuation;
-            }
-
-            if (csvLine.charAt(lastCharIndex + 1) == '"') {
-                firstIndexWithoutQuote = lastCharIndex + 2;
-                continue;
-            }
-
-            if (csvLine.charAt(lastCharIndex + 1) == ',') {
-                cellContinuation = csvLine.substring(firstCharIndex, lastCharIndex);
-                cellContinuation = cellContinuation.replace("\"\"", "\"");
-                isFinishedCell = true;
-                firstCharIndex = lastCharIndex + 2;
-                return cellContinuation;
-            }
+            return true;
+        } catch (IOException e) {
+            return false;
         }
     }
 
-    private String getNextCell(String csvLine, int firstCharIndex) {
-        if (firstCharIndex >= csvLine.length()) {
-            isFinishedCell = true;
-            lastCharIndex = csvLine.length();
-            return "";
+    private void writeOpeningTags() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(htmlFileName))) {
+            writer.write("<!DOCTYPE html>");
+            writer.newLine();
+            writer.write("<html>");
+            writer.newLine();
+            writer.write("<head>");
+            writer.newLine();
+            writer.write("<meta charset=\"UTF-8\">");
+            writer.newLine();
+            writer.write("<title>" + htmlTitle + "</title>");
+            writer.newLine();
+            writer.write("</head>");
+            writer.newLine();
+            writer.write("<body>");
+            writer.newLine();
+            writer.write("<table>");
+            writer.newLine();
+        } catch (IOException e) {
+            System.exit(0);
         }
+    }
 
-        if (csvLine.charAt(firstCharIndex) == '"') {
-            ++this.firstCharIndex;
-            return getCellContinuation(csvLine);
+    private void writeClosingTags() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(htmlFileName, true))) {
+            writer.newLine();
+            writer.write("</table>");
+            writer.newLine();
+            writer.write("</body>");
+            writer.newLine();
+            writer.write("</html>");
+        } catch (IOException e) {
+            System.exit(0);
         }
-
-        lastCharIndex = csvLine.indexOf(",", firstCharIndex);
-
-        if (lastCharIndex == firstCharIndex) {
-            ++this.firstCharIndex;
-            ++lastCharIndex;
-            isFinishedCell = true;
-            return "";
-        }
-
-        if (lastCharIndex == -1) {
-            lastCharIndex = csvLine.length();
-            isFinishedCell = true;
-            return csvLine.substring(firstCharIndex);
-        }
-
-        this.firstCharIndex = lastCharIndex + 1;
-        isFinishedCell = true;
-        return csvLine.substring(firstCharIndex, lastCharIndex);
     }
 }
