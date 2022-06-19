@@ -1,6 +1,6 @@
 package ru.academits.nekrasovgleb.mygraph.main;
 
-import ru.academits.nekrasovgleb.mygraph.MyGraph;
+import ru.academits.nekrasovgleb.mygraph.Graph;
 
 import java.util.function.Consumer;
 
@@ -22,12 +22,13 @@ public class Main {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
         };
 
-        MyGraph<String> graph1 = new MyGraph<>(data, edges);
+        Graph<String> graph1 = new Graph<>(data, edges);
         System.out.println("Создан граф со следующей матрицей ребер между вершинами:");
         System.out.println(graph1);
 
-        System.out.println("Список элементов графа при обходе графа в ширину:");
         Consumer<String> printToConsole = x -> System.out.print(x + ", ");
+
+        System.out.println("Список элементов графа при обходе графа в ширину:");
         graph1.traverseByWidth(printToConsole);
         System.out.println();
 

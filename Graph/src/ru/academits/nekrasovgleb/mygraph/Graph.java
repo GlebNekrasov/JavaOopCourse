@@ -6,11 +6,11 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.function.Consumer;
 
-public class MyGraph<T> {
+public class Graph<T> {
     private final T[] vertices;
     private final int[][] edges;
 
-    public MyGraph(T[] vertices, int[][] edges) {
+    public Graph(T[] vertices, int[][] edges) {
         if (vertices == null) {
             throw new NullPointerException("При создании графа передан объект null в качестве аргумента, который должен " +
                     "содержать данные вершин графа. Этот аргумент должен содержать данные как минимум для одной вершины.");
@@ -48,20 +48,22 @@ public class MyGraph<T> {
     }
 
     public void traverseByWidth(Consumer<T> consumer) {
-        final boolean[] visited = new boolean[edges.length];
+        boolean[] visited = new boolean[edges.length];
+        Queue<Integer> queue = new LinkedList<>();
 
         for (int i = 0; i < edges.length; ++i) {
             if (!visited[i]) {
-                Queue<Integer> queue = new LinkedList<>();
                 queue.add(i);
 
                 while (!queue.isEmpty()) {
                     Integer vertexIndex = queue.remove();
 
-                    if (!visited[vertexIndex]) {
-                        consumer.accept(vertices[vertexIndex]);
-                        visited[vertexIndex] = true;
+                    if (visited[vertexIndex]) {
+                        continue;
                     }
+
+                    consumer.accept(vertices[vertexIndex]);
+                    visited[vertexIndex] = true;
 
                     for (int j = 0; j < edges.length; ++j) {
                         if (j != vertexIndex && edges[vertexIndex][j] != 0 && !visited[j]) {
@@ -74,20 +76,22 @@ public class MyGraph<T> {
     }
 
     public void traverseByDepth(Consumer<T> consumer) {
-        final boolean[] visited = new boolean[edges.length];
+        boolean[] visited = new boolean[edges.length];
+        Deque<Integer> stack = new LinkedList<>();
 
         for (int i = 0; i < edges.length; ++i) {
             if (!visited[i]) {
-                Deque<Integer> stack = new LinkedList<>();
                 stack.add(i);
 
                 while (!stack.isEmpty()) {
                     Integer vertexIndex = stack.removeLast();
 
-                    if (!visited[vertexIndex]) {
-                        consumer.accept(vertices[vertexIndex]);
-                        visited[vertexIndex] = true;
+                    if (visited[vertexIndex]) {
+                        continue;
                     }
+
+                    consumer.accept(vertices[vertexIndex]);
+                    visited[vertexIndex] = true;
 
                     for (int j = edges.length - 1; j >= 0; --j) {
                         if (j != vertexIndex && edges[vertexIndex][j] != 0 && !visited[j]) {
@@ -101,10 +105,12 @@ public class MyGraph<T> {
 
     // visit - вспомогательная функция для функции обхода графа в глубину с рекурсией
     private void visit(int vertexIndex, boolean[] visited, Consumer<T> consumer) {
-        if (!visited[vertexIndex]) {
-            consumer.accept(vertices[vertexIndex]);
-            visited[vertexIndex] = true;
+        if (visited[vertexIndex]) {
+            return;
         }
+
+        consumer.accept(vertices[vertexIndex]);
+        visited[vertexIndex] = true;
 
         for (int i = 0; i < edges.length; ++i) {
             if (i != vertexIndex && edges[vertexIndex][i] != 0 && !visited[i]) {
@@ -114,7 +120,7 @@ public class MyGraph<T> {
     }
 
     public void traverseByDepthRecursion(Consumer<T> consumer) {
-        final boolean[] visited = new boolean[edges.length];
+        boolean[] visited = new boolean[edges.length];
 
         for (int i = 0; i < vertices.length; ++i) {
             if (!visited[i]) {
