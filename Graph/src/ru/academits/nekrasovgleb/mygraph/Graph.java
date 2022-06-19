@@ -105,10 +105,6 @@ public class Graph<T> {
 
     // visit - вспомогательная функция для функции обхода графа в глубину с рекурсией
     private void visit(int vertexIndex, boolean[] visited, Consumer<T> consumer) {
-        if (visited[vertexIndex]) {
-            return;
-        }
-
         consumer.accept(vertices[vertexIndex]);
         visited[vertexIndex] = true;
 
